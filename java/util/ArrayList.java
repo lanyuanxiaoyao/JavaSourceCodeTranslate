@@ -500,7 +500,9 @@ public class ArrayList<E> extends AbstractList<E>
      * this list.
      *
      * 按照合适的序列(从第一个到最后一个)返回一个包含list中存储的所有元素的数组; 运行时
-     * 返回的数组的类型就是指定的数组的类型. 如果当前的list匹配指定的数组,
+     * 返回的数组的类型就是(参数)指定的数组的类型. 如果(参数)指定的数组能放得下list(的全部元素), 
+     * 那么就会直接返回这个数组(并将list的元素放入数组中).
+     * 否则, 就会申请一个新的数组, 其类型与指定的数组类型相同, 大小则是list的大小.
      *
      * <p>If the list fits in the specified array with room to spare
      * (i.e., the array has more elements than the list), the element in
@@ -509,27 +511,51 @@ public class ArrayList<E> extends AbstractList<E>
      * list <i>only</i> if the caller knows that the list does not contain
      * any null elements.)
      *
+     * 如果(参数)指定的数组能放得下list, 并且数组的空间还有剩余(数组的元素比list的要多), 那么
+     * 数组中在集合长度之后紧接着的一个数组元素将被设为null. (这在调用者确认list中没有包含null
+     * 元素的情况下, 确定list长度的时候非常管用.)
+     *
      * @param a the array into which the elements of the list are to
      *          be stored, if it is big enough; otherwise, a new array of the
      *          same runtime type is allocated for this purpose.
+     *
+     *          如果数组足够大, 可以放下整个list的元素, 则用这个数组存储list的元素.
+     *          否则, 就申请一个新的, 类型与a数组类型相同的数组, 来存储list的元素.
+     *
      * @return an array containing the elements of the list
+     *
+     *          一个包含list所有元素的数组
+     *
      * @throws ArrayStoreException if the runtime type of the specified array
      *         is not a supertype of the runtime type of every element in
      *         this list
-     * @throws NullPointerException if the specified array is null
+     *
+     *          如果(参数)指定的数组的类型不是list里所有元素的父类型
+     *
+     * @throws NullPointerException if the specified array is null 如果(参数)指定的数组为null
+     *
+     * 这个方法是为了得到一个指定类型的, 存储所有list元素的数组, 参数是一个数组,
+     * 如果传入的数组的大小比list大, 就直接用这个数组存list的元素, 并将list结尾
+     * 的下一个数组元素设为null. 如果这个数组不如list大, 就直接new一个新的数组,
+     * 用来放list的元素, 当然啦, 这个数组的大小就和list是一样的了.
+     * 所以如果传入的数组比list要大的话, 那么方法返回的数组就是传入的数组, 大小就
+     * 是原来的大小, 而不是list的大小.
+     *
      */
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
+        // 判断传入的数组的大小是不是比list要小
         if (a.length < size)
             // Make a new array of a's runtime type, but my contents:
             return (T[]) Arrays.copyOf(elementData, size, a.getClass());
         System.arraycopy(elementData, 0, a, 0, size);
+        // 将list的后一个元素设为null
         if (a.length > size)
             a[size] = null;
         return a;
     }
 
-    // Positional Access Operations
+    // Positional Access Operations 位置访问操作(通过下标获取数组元素的方法们)
 
     @SuppressWarnings("unchecked")
     E elementData(int index) {
@@ -544,11 +570,14 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Returns the element at the specified position in this list.
      *
-     * @param  index index of the element to return
-     * @return the element at the specified position in this list
-     * @throws IndexOutOfBoundsException {@inheritDoc}
+     * 返回list中指定位置(下标)的元素
+     *
+     * @param  index index of the element to return 需要返回的元素的位置(下标)
+     * @return the element at the specified position in this list list中指定位置(下标)的元素
+     * @throws IndexOutOfBoundsException {@inheritDoc} 越界, 指定的位置(下标)超过了数组的大小
      */
     public E get(int index) {
+        // 检查指定的位置(下标)是否越界
         Objects.checkIndex(index, size);
         return elementData(index);
     }
@@ -557,10 +586,12 @@ public class ArrayList<E> extends AbstractList<E>
      * Replaces the element at the specified position in this list with
      * the specified element.
      *
-     * @param index index of the element to replace
-     * @param element element to be stored at the specified position
-     * @return the element previously at the specified position
-     * @throws IndexOutOfBoundsException {@inheritDoc}
+     * 用指定的元素替换list中指定位置(下标)的元素
+     *
+     * @param index index of the element to replace 需要替换的位置(下标)
+     * @param element element to be stored at the specified position 在指定的位置(下标)要存储的元素
+     * @return the element previously at the specified position 指定位置(下标)替换之前的元素
+     * @throws IndexOutOfBoundsException {@inheritDoc} 越界, 指定的位置(下标)超过了数组的大小
      */
     public E set(int index, E element) {
         Objects.checkIndex(index, size);
