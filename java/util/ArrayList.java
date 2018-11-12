@@ -604,6 +604,11 @@ public class ArrayList<E> extends AbstractList<E>
      * This helper method split out from add(E) to keep method
      * bytecode size under 35 (the -XX:MaxInlineSize default value),
      * which helps when add(E) is called in a C1-compiled loop.
+     *
+     * 这个辅助方法是从add(E)方法中分离出来的, 为的是确保(add(E))方法
+     * 的字节码大小在35(-XX:MaxInlineSize参数的默认值)以下, 使得add(E)
+     * 方法可以在一个编译循环中被调用.
+     *
      */
     private void add(E e, Object[] elementData, int s) {
         if (s == elementData.length)
