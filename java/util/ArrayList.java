@@ -609,6 +609,22 @@ public class ArrayList<E> extends AbstractList<E>
      * 的字节码大小在35(-XX:MaxInlineSize参数的默认值)以下, 使得add(E)
      * 方法可以在一个编译循环中被调用.
      *
+     * 在Java虚拟机中, 有一些代码片段是经常用到而且体积非常小的, 比如Java
+     * Bean中的getter和setter代码, 为了提高方法执行的效率, 这些方法会被
+     * Java虚拟机内联编译到代码当中. 在Java虚拟机默认的设置当中, 只有方法
+     * 的代码长度在35个字节以下, 才会被虚拟机做内联处理, 于是为了保证add(E)
+     * 方法可以被虚拟机做内联处理, 才将这个方法中的操作拆分出来.
+     *
+     * 关于内联
+     * 调用某个方法的过程在虚拟机中实际上是将汇编代码的执行顺序转移到某段内存
+     * 当中, 等到执行完毕之后, 再切换回到原来的位置, 继续向下执行, 这种转移操
+     * 作要求在转去前要保护现场并记忆执行的地址. 转回后先要恢复现场, 并按原来保
+     * 存地址继续执行. 也就是通常说的压栈和出栈。因此, 函数调用要有一定的时间
+     * 和空间方面的开销. 那么对于那些函数体代码不是很大，又频繁调用的函数来说,
+     * 这个时间和空间的消耗会很大.
+     * 内联处理实际上就是将存在别的地方的方法的代码, 直接替换到原来正常顺序中
+     * 调用该方法的位置上, 这样就不存在跳转的问题了. 类似于C语言中的define.
+     *
      */
     private void add(E e, Object[] elementData, int s) {
         if (s == elementData.length)
@@ -620,7 +636,9 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Appends the specified element to the end of this list.
      *
-     * @param e element to be appended to this list
+     * 添加指定的元素到list的末尾
+     *
+     * @param e element to be appended to this list 将要被添加到list末尾的元素
      * @return {@code true} (as specified by {@link Collection#add})
      */
     public boolean add(E e) {
@@ -634,17 +652,23 @@ public class ArrayList<E> extends AbstractList<E>
      * list. Shifts the element currently at that position (if any) and
      * any subsequent elements to the right (adds one to their indices).
      *
-     * @param index index at which the specified element is to be inserted
-     * @param element element to be inserted
-     * @throws IndexOutOfBoundsException {@inheritDoc}
+     * 插入指定的元素到list指定的位置上. 向右移动指定位置上和其后续(如果有)的所
+     * 有元素
+     *
+     * @param index index at which the specified element is to be inserted 指定元素将要被插入的位置(索引)
+     * @param element element to be inserted 将要被插入的元素
+     * @throws IndexOutOfBoundsException {@inheritDoc} 数组越界
      */
     public void add(int index, E element) {
+        // 边界检查, 数组越界的异常会在这里被抛出
         rangeCheckForAdd(index);
         modCount++;
         final int s;
         Object[] elementData;
+        // 容量不够了就先增加容量
         if ((s = size) == (elementData = this.elementData).length)
             elementData = grow();
+        // 将指定下标后的元素复制到下标+1的位置上
         System.arraycopy(elementData, index,
                          elementData, index + 1,
                          s - index);
@@ -657,9 +681,11 @@ public class ArrayList<E> extends AbstractList<E>
      * Shifts any subsequent elements to the left (subtracts one from their
      * indices).
      *
-     * @param index the index of the element to be removed
-     * @return the element that was removed from the list
-     * @throws IndexOutOfBoundsException {@inheritDoc}
+     * 移除list中指定位置的元素. 向左移动改位置之后的所有元素.
+     *
+     * @param index the index of the element to be removed 将要被移出的元素的位置(下标)
+     * @return the element that was removed from the list 被移出list的元素
+     * @throws IndexOutOfBoundsException {@inheritDoc} 数组越界
      */
     public E remove(int index) {
         Objects.checkIndex(index, size);
@@ -686,6 +712,8 @@ public class ArrayList<E> extends AbstractList<E>
         final int expectedModCount = modCount;
         // ArrayList can be subclassed and given arbitrary behavior, but we can
         // still deal with the common case where o is ArrayList precisely
+        // ArrayList可以被继承并随意增加行为, 但通常情况下, 如果o是ArrayList的话我们
+        // 仍然可以处理通用的部分.
         boolean equal = (o.getClass() == ArrayList.class)
             ? equalsArrayList((ArrayList<?>) o)
             : equalsRange((List<?>) o, 0, size);
@@ -694,12 +722,17 @@ public class ArrayList<E> extends AbstractList<E>
         return equal;
     }
 
+    /**
+     * 该方法比较的是ArrayList和其他List的子类是否相同, 通过获取其他List的迭代器来进行比较
+     */
     boolean equalsRange(List<?> other, int from, int to) {
         final Object[] es = elementData;
+        // 判断list是否在并发环境下被更改了
         if (to > es.length) {
             throw new ConcurrentModificationException();
         }
         var oit = other.iterator();
+        // 将两个数组逐个比较
         for (; from < to; from++) {
             if (!oit.hasNext() || !Objects.equals(es[from], oit.next())) {
                 return false;
@@ -708,16 +741,21 @@ public class ArrayList<E> extends AbstractList<E>
         return !oit.hasNext();
     }
 
+    /**
+     * 该方法比较的是ArrayList和ArrayList
+     */
     private boolean equalsArrayList(ArrayList<?> other) {
         final int otherModCount = other.modCount;
         final int s = size;
         boolean equal;
+        // 先比较大小
         if (equal = (s == other.size)) {
             final Object[] otherEs = other.elementData;
             final Object[] es = elementData;
             if (s > es.length || s > otherEs.length) {
                 throw new ConcurrentModificationException();
             }
+            // 再逐个元素进行比较
             for (int i = 0; i < s; i++) {
                 if (!Objects.equals(es[i], otherEs[i])) {
                     equal = false;
@@ -768,6 +806,9 @@ public class ArrayList<E> extends AbstractList<E>
      * contained the specified element (or equivalently, if this list
      * changed as a result of the call).
      *
+     * 移除list中第一次出现(与指定元素相同)的元素, 如果其存在的话. 如果list中没有包含
+     * 该元素的话, 那么list不会被修改. 
+     *
      * @param o element to be removed from this list, if present
      * @return {@code true} if this list contained the specified element
      */
@@ -794,6 +835,8 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Private remove method that skips bounds checking and does not
      * return the value removed.
+     *
+     * 私有的remove方法, 这个方法跳过了边界检查, 也不会返回被移除的元素.
      */
     private void fastRemove(Object[] es, int i) {
         modCount++;
@@ -911,6 +954,8 @@ public class ArrayList<E> extends AbstractList<E>
 
     /**
      * A version of rangeCheck used by add and addAll.
+     *
+     * 一个被用于add和addAll的边界检查的版本
      */
     private void rangeCheckForAdd(int index) {
         if (index > size || index < 0)
