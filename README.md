@@ -112,3 +112,22 @@ private void add(E e, Object[] elementData, int s) {
 ```
 6. 对于一些编程时常见的词汇, 不需要翻译为中文, 比如`list`, `map`是大部分程序员的通用叫法, 如果强行翻译为`列表`和`键值对`反而不利于理解, 更别说`Set`你打算怎么翻译呢
 7. 翻译的原则是忠于原文, 但不是逐字翻译, 我们都不是什么专业的翻译人员, 过于苛责字句翻译的准确性属于舍本逐末, 我们的翻译应当追求的是将原文的意思表达清楚, 一些语气词或者一些语序, 可以不必在意, 但切记, 关键的知识点一定要再三斟酌再表达出来
+8. 尽管Java源码的注释非常详细, 但是在代码中对于一些流程的说明几乎没有, 因为Java的注释数据纲领性的, 但是具体到某一行的代码的时候, 就没有说明了, 这里就是我们需要主动输出知识的时候了, 凡是觉得需要说明的代码, 不要吝啬自己的智慧, 大方地加上自己的理解吧
+```java
+public void add(int index, E element) {
+  // 边界检查, 数组越界的异常会在这里被抛出
+  rangeCheckForAdd(index);
+  modCount++;
+  final int s;
+  Object[] elementData;
+  // 容量不够了就先增加容量
+  if ((s = size) == (elementData = this.elementData).length)
+      elementData = grow();
+  // 将指定下标后的元素复制到下标+1的位置上
+  System.arraycopy(elementData, index,
+                    elementData, index + 1,
+                    s - index);
+  elementData[index] = element;
+  size = s + 1;
+}
+```
