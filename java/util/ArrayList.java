@@ -872,20 +872,30 @@ public class ArrayList<E> extends AbstractList<E>
      * undefined if the specified collection is this list, and this
      * list is nonempty.)
      *
-     * 追加指定Collection集合的所有元素到list的末尾, 
+     * 追加指定Collection集合的所有元素到list的末尾, 他们的顺序是按照指定的Collection
+     * 集合的迭代器返回顺序来定的. 这个方法没有定义的一个操作是在方法执行的过程中, 如果
+     * 指定的Collection集合被修改了. (这意味着, 如果指定的Collection集合就是该list
+     * 并且list非空, 那么这种调用的行为是没有定义的.)
      *
-     * @param c collection containing elements to be added to this list
-     * @return {@code true} if this list changed as a result of the call
-     * @throws NullPointerException if the specified collection is null
+     * (翻译起来比较拗口, 实际上上面说的情况是指, 这个方法实际上是有隐患的, 如果你想要
+     * 传进addAll方法的Collection在addAll方法没有执行完的时候就被修改了, 那么该方法
+     * 将出现不可预料的后果, 最简单的例子就是使用addAll方法add自己, 但我自己简单尝试了
+     * 一下, 好像结果是正确的, 并没有发生异常)
+     *
+     * @param c collection containing elements to be added to this list 将要被添加进list中的元素的Collection集合
+     * @return {@code true} if this list changed as a result of the call 如果list被该方法的调用改变了, 就返回true
+     * @throws NullPointerException if the specified collection is null 如果指定的Collection集合是null
      */
     public boolean addAll(Collection<? extends E> c) {
         Object[] a = c.toArray();
         modCount++;
         int numNew = a.length;
+        // 如果传进来的Collection为空, 那么list将不会被修改
         if (numNew == 0)
             return false;
         Object[] elementData;
         final int s;
+        // 如果剩余的数组空间不足以放下传入的Collection的全部元素, 就增长numNew个数组空间
         if (numNew > (elementData = this.elementData).length - (s = size))
             elementData = grow(s + numNew);
         System.arraycopy(a, 0, elementData, s, numNew);
