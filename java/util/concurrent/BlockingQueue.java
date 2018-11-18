@@ -1,33 +1,6 @@
 /*
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
-
-/*
- *
- *
- *
- *
- *
  * Written by Doug Lea with assistance from members of JCP JSR-166
  * Expert Group and released to the public domain, as explained at
  * http://creativecommons.org/publicdomain/zero/1.0/
@@ -42,6 +15,17 @@ import java.util.Queue;
  * A {@link Queue} that additionally supports operations that wait for
  * the queue to become non-empty when retrieving an element, and wait
  * for space to become available in the queue when storing an element.
+ *
+ * BlockingQueue在Queue的基础上增加了一个操作：
+ *      1、当从队列中取对象的时候，等待queue变成非空（再取）；
+ *      2、当往队列中加对象的时候，等待queue有空间（再加）。
+ *
+ * （这段话是BlockingQueue的特性，也是了解它的第一步。后面的翻译待有了一定的考虑和资料册查阅再重新加上。
+ *   这是一个标准接口，后面会细分各种不同子特性的BlockingQueue：
+ *   比如利用可重入锁实现的ArrayBlockingQueue以及利用链表的LinedBlockingQueue等。
+ *   这算开了个小小的头。这个源码翻译（其实是为了阅读源码）的计划我觉得是个很不错的技术沉淀的机会。重在积累，贵在坚持。
+ *   待完善。后期会删掉这一段。
+ *  ）
  *
  * <p>{@code BlockingQueue} methods come in four forms, with different ways
  * of handling operations that cannot be satisfied immediately, but may be
