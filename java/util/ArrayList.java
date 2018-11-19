@@ -911,12 +911,16 @@ public class ArrayList<E> extends AbstractList<E>
      * in the list in the order that they are returned by the
      * specified collection's iterator.
      *
+     * 在指定的位置插入指定Collection集合的全部元素到当前list中. 向右移动当前位置的
+     * 的元素以及当前位置之后的元素(如果存在)(增加其下标). 新的元素会按照指定的Collection
+     * 迭代器返回的顺序出现在list当中.
+     *
      * @param index index at which to insert the first element from the
-     *              specified collection
-     * @param c collection containing elements to be added to this list
-     * @return {@code true} if this list changed as a result of the call
+     *              specified collection 将要插入的指定的Collection集合的第一个元素所在的位置(下标)
+     * @param c collection containing elements to be added to this list 包含将要插入到当前list中所有元素的集合
+     * @return {@code true} if this list changed as a result of the call 如果list被改变了, 将会返回true作为调用的结果
      * @throws IndexOutOfBoundsException {@inheritDoc}
-     * @throws NullPointerException if the specified collection is null
+     * @throws NullPointerException if the specified collection is null 如果指定的集合为null
      */
     public boolean addAll(int index, Collection<? extends E> c) {
         rangeCheckForAdd(index);
@@ -931,7 +935,10 @@ public class ArrayList<E> extends AbstractList<E>
         if (numNew > (elementData = this.elementData).length - (s = size))
             elementData = grow(s + numNew);
 
+        // 计算需要移动的距离, 一个简单的逻辑, 如果index等于size的话, 那么就不需要移动, 直接将
+        // 新的集合加在list的后面即可, 如果index比size小的话, 则按照等于的情况往前推算即可
         int numMoved = s - index;
+        // 所谓的将元素右移, 实际上是将要移动的所有元素复制到下标+1的位置上, 而不是通过循环一个个移动
         if (numMoved > 0)
             System.arraycopy(elementData, index,
                              elementData, index + numNew,
@@ -947,6 +954,10 @@ public class ArrayList<E> extends AbstractList<E>
      * Shifts any succeeding elements to the left (reduces their index).
      * This call shortens the list by {@code (toIndex - fromIndex)} elements.
      * (If {@code toIndex==fromIndex}, this operation has no effect.)
+     *
+     * 移除list中所有下标在fromIndex(包含)和toIndex(不包含)之间的元素.
+     * 向左移动后面的所有元素(减少其下标). 这个方法的调用会减少list(toIndex - fromIndex)
+     * 个元素. (如果toIndex==fromIndex), 这个操作将没有任何效果.
      *
      * @throws IndexOutOfBoundsException if {@code fromIndex} or
      *         {@code toIndex} is out of range
@@ -1623,6 +1634,10 @@ public class ArrayList<E> extends AbstractList<E>
             return new SubList<>(this, fromIndex, toIndex);
         }
 
+        /**
+         * 提供给add方法使用的下标范围检查, 如果传入的index值小于0或大于
+         * 内置数据的大小, 就会抛出下标越界的异常
+         */
         private void rangeCheckForAdd(int index) {
             if (index < 0 || index > this.size)
                 throw new IndexOutOfBoundsException(outOfBoundsMsg(index));
