@@ -24,7 +24,6 @@ import java.util.Queue;
  *   这是一个标准接口，后面会细分各种不同子特性的BlockingQueue：
  *   比如利用可重入锁实现的ArrayBlockingQueue以及利用链表的LinedBlockingQueue等。
  *   这算开了个小小的头。这个源码翻译（其实是为了阅读源码）的计划我觉得是个很不错的技术沉淀的机会。重在积累，贵在坚持。
- *   待完善。后期会删掉这一段。
  *  ）
  *
  * <p>{@code BlockingQueue} methods come in four forms, with different ways
@@ -35,6 +34,13 @@ import java.util.Queue;
  * blocks the current thread indefinitely until the operation can succeed,
  * and the fourth blocks for only a given maximum time limit before giving
  * up.  These methods are summarized in the following table:
+ *
+ * BlockingQueue的方法有四种形式，通过不同的方式来处理如下那些不能被立即满足，但是在未来的某个时刻能够被满足的操作。
+ * 第一种是抛出异常；
+ * 第二种返回一个特殊值（要么是null,要么是false），第二种方式取决于你选的是哪种操作；
+ * 第三种一直阻塞当前的线程，直到操作被成功执行；
+ * 第四种也是线程被阻塞，但是阻塞时间并不是永久的，而是有个被给定的最大时间。
+ * 这些操作被总结到如下的表格当中：
  *
  * <table class="plain">
  * <caption>Summary of BlockingQueue methods</caption>
@@ -68,11 +74,22 @@ import java.util.Queue;
  *  </tr>
  * </table>
  *
+ * 上面的HTML表格字符串显示可能不够直观，直观的表格如下图：
+ *
+ *          Throws-exception	Special—value   Blocks          Times out
+ * Insert	    add(e)	       offer(e)	        put(e)	        offer(e, time, unit)
+ * Remove	    remove()	    poll()	        take()	        poll(time, unit)
+ * Examine	    element()	    peek()	       not-applicable	not applicable
+ *
+ *
  * <p>A {@code BlockingQueue} does not accept {@code null} elements.
  * Implementations throw {@code NullPointerException} on attempts
  * to {@code add}, {@code put} or {@code offer} a {@code null}.  A
  * {@code null} is used as a sentinel value to indicate failure of
  * {@code poll} operations.
+ *
+ * BlockingQueue是不能放置null值的，当你尝试add/put/offer null的时候，会抛出NullPointerException。
+ * null在BlockingQueue被当做一个"哨兵值"，用来表示poll操作的失败。
  *
  * <p>A {@code BlockingQueue} may be capacity bounded. At any given
  * time it may have a {@code remainingCapacity} beyond which no
