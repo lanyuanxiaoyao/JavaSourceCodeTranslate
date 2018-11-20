@@ -964,6 +964,8 @@ public class ArrayList<E> extends AbstractList<E>
      *         ({@code fromIndex < 0 ||
      *          toIndex > size() ||
      *          toIndex < fromIndex})
+     * 数组越界的异常, 有几种情况, 如果fromIndex或者toIndex超出数组范围, 或者
+     * fromIndex小于0, 或者toIndex大于size(数组的大小), 或者toIndex小于fromIndex
      */
     protected void removeRange(int fromIndex, int toIndex) {
         if (fromIndex > toIndex) {
@@ -974,7 +976,11 @@ public class ArrayList<E> extends AbstractList<E>
         shiftTailOverGap(elementData, fromIndex, toIndex);
     }
 
-    /** Erases the gap from lo to hi, by sliding down following elements. */
+    /** 
+    * Erases the gap from lo to hi, by sliding down following elements. 
+    * 
+    * 通过向前滑动的方式来擦出(下标为)lo(low)到hi(high)之间的空缺
+    */
     private void shiftTailOverGap(Object[] es, int lo, int hi) {
         System.arraycopy(es, hi, es, lo, size - hi);
         for (int to = size, i = (size -= hi - lo); i < to; i++)
@@ -995,6 +1001,10 @@ public class ArrayList<E> extends AbstractList<E>
      * Constructs an IndexOutOfBoundsException detail message.
      * Of the many possible refactorings of the error handling code,
      * this "outlining" performs best with both server and client VMs.
+     *
+     * 构建一个索引越界异常的详细信息. 在错误代码的许多可能的重构中, 这个
+     * 描述在服务器和客户端的虚拟机中有更好的表现.
+     * 
      */
     private String outOfBoundsMsg(int index) {
         return "Index: "+index+", Size: "+size;
@@ -1002,6 +1012,9 @@ public class ArrayList<E> extends AbstractList<E>
 
     /**
      * A version used in checking (fromIndex > toIndex) condition
+     *
+     * 一个用于检查条件fromIndex大于toIndex的(异常信息重构的)版本
+     *
      */
     private static String outOfBoundsMsg(int fromIndex, int toIndex) {
         return "From Index: " + fromIndex + " > To Index: " + toIndex;
@@ -1011,15 +1024,17 @@ public class ArrayList<E> extends AbstractList<E>
      * Removes from this list all of its elements that are contained in the
      * specified collection.
      *
-     * @param c collection containing elements to be removed from this list
-     * @return {@code true} if this list changed as a result of the call
+     * 移除list中所有被包含在指定集合中的元素.
+     *
+     * @param c collection containing elements to be removed from this list 包含着将被从list中移除的元素的集合
+     * @return {@code true} if this list changed as a result of the call 如果这个方法的调用改变了list, 就返回true
      * @throws ClassCastException if the class of an element of this list
-     *         is incompatible with the specified collection
+     *         is incompatible with the specified collection 如果list中有一个元素的类型与指定集合中的类型不相容
      * (<a href="Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if this list contains a null element and the
-     *         specified collection does not permit null elements
+     *         specified collection does not permit null elements 
      * (<a href="Collection.html#optional-restrictions">optional</a>),
-     *         or if the specified collection is null
+     *         or if the specified collection is null 如果list中包含一个null元素并且指定集合中不允许存在null元素, 或者指定的集合为null
      * @see Collection#contains(Object)
      */
     public boolean removeAll(Collection<?> c) {
@@ -1030,6 +1045,9 @@ public class ArrayList<E> extends AbstractList<E>
      * Retains only the elements in this list that are contained in the
      * specified collection.  In other words, removes from this list all
      * of its elements that are not contained in the specified collection.
+     *
+     * 仅保留list中被指定集合包含的元素. 换句话说, 移除list中所有没有被包含在
+     * 指定集合中的元素.
      *
      * @param c collection containing elements to be retained in this list
      * @return {@code true} if this list changed as a result of the call
