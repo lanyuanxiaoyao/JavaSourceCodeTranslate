@@ -1049,27 +1049,33 @@ public class ArrayList<E> extends AbstractList<E>
      * 仅保留list中被指定集合包含的元素. 换句话说, 移除list中所有没有被包含在
      * 指定集合中的元素.
      *
-     * @param c collection containing elements to be retained in this list
-     * @return {@code true} if this list changed as a result of the call
+     * @param c collection containing elements to be retained in this list 包含list中将要被保留下来的元素的集合
+     * @return {@code true} if this list changed as a result of the call 如果这个方法的调用改变了list, 就返回true
      * @throws ClassCastException if the class of an element of this list
-     *         is incompatible with the specified collection
+     *         is incompatible with the specified collection 如果list中有一个元素的类型与指定集合中的类型不相容
      * (<a href="Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if this list contains a null element and the
      *         specified collection does not permit null elements
      * (<a href="Collection.html#optional-restrictions">optional</a>),
-     *         or if the specified collection is null
+     *         or if the specified collection is null 如果list中包含一个null元素并且指定集合中不允许存在null元素, 或者指定的集合为null
      * @see Collection#contains(Object)
      */
     public boolean retainAll(Collection<?> c) {
         return batchRemove(c, true, 0, size);
     }
 
+    /**
+     * 批量移除元素的方法
+     */
     boolean batchRemove(Collection<?> c, boolean complement,
                         final int from, final int end) {
+        // 检查集合当中有没有值为null的元素, 如果有就抛出空指针异常
         Objects.requireNonNull(c);
         final Object[] es = elementData;
         int r;
-        // Optimize for initial run of survivors
+        // Optimize for initial run of survivors 关于保留元素的运行初始化的优化
+        // 这里是为了找到list中第一个存在于目标集合中的元素, 这个位置代表运行开始的标志, 如果是retain, 那么从这个位置开始移除元素
+        // 如果是remove, 那么就从这个位置开始保留元素, 需要仔细体会`!= complement`这个比较的作用
         for (r = from;; r++) {
             if (r == end)
                 return false;
