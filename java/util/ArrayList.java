@@ -1104,11 +1104,15 @@ public class ArrayList<E> extends AbstractList<E>
      * Saves the state of the {@code ArrayList} instance to a stream
      * (that is, serializes it).
      *
-     * @param s the stream
-     * @throws java.io.IOException if an I/O error occurs
+     * 保存ArrayList实例的状态到一个(输出)流当中(意思就是, 进行序列化操作)
+     *
+     * @param s the stream (输出)流
+     * @throws java.io.IOException if an I/O error occurs 如果发生了I/O错误
      * @serialData The length of the array backing the {@code ArrayList}
      *             instance is emitted (int), followed by all of its elements
      *             (each an {@code Object}) in the proper order.
+     *             先(向流中)传入ArrayList实例的数组长度(整型), 然后紧跟着按照恰
+     *             当的顺序传入list数组中的元素
      */
     private void writeObject(java.io.ObjectOutputStream s)
         throws java.io.IOException {
