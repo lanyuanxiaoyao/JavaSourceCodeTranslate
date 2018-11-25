@@ -1,26 +1,6 @@
 /*
  * Copyright (c) 1997, 2018, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
  */
 
 package java.util;
@@ -29,10 +9,15 @@ package java.util;
  * This class provides a skeletal implementation of the {@code Collection}
  * interface, to minimize the effort required to implement this interface. <p>
  *
+ * 这个类提供了Collection接口的实现骨架，目的是为了尽可能地实现这个接口需要的时间。
+ *
  * To implement an unmodifiable collection, the programmer needs only to
  * extend this class and provide implementations for the {@code iterator} and
  * {@code size} methods.  (The iterator returned by the {@code iterator}
  * method must implement {@code hasNext} and {@code next}.)<p>
+ *
+ * 为了实现一个不可修改的集合，程序只需要拓展这个类并提供iterator和size的实现方法。
+ * （通过iterator方法返回的迭代器必须实现hasNext和next。）
  *
  * To implement a modifiable collection, the programmer must additionally
  * override this class's {@code add} method (which otherwise throws an
@@ -40,17 +25,29 @@ package java.util;
  * {@code iterator} method must additionally implement its {@code remove}
  * method.<p>
  *
+ * 为了实现一个可编辑的集合，程序员必须额外地覆盖此类的add方法（除此之外这个方法
+ * 还会抛出一个UnsupportedOperationException的异常），并且通过iterator方法返回
+ * 的迭代器必须额外地实现它的remove方法。
+ *
  * The programmer should generally provide a void (no argument) and
  * {@code Collection} constructor, as per the recommendation in the
  * {@code Collection} interface specification.<p>
+ *
+ * 程序员通常应该提供一个空的（没有参数）和集合的构造器，作为每一个集合接口规范的
+ * 建议。
  *
  * The documentation for each non-abstract method in this class describes its
  * implementation in detail.  Each of these methods may be overridden if
  * the collection being implemented admits a more efficient implementation.<p>
  *
+ * 这个类中每一个非抽象方法的文档描述了它的具体实现。在集合需要另一种实现的情况下，
+ * 这些个方法都能被覆写。
+ *
  * This class is a member of the
  * <a href="{@docRoot}/java.base/java/util/package-summary.html#CollectionsFramework">
  * Java Collections Framework</a>.
+ *
+ * 这个类是Java集合框架中的一个成员。
  *
  * @author  Josh Bloch
  * @author  Neal Gafter
@@ -62,14 +59,19 @@ public abstract class AbstractCollection<E> implements Collection<E> {
     /**
      * Sole constructor.  (For invocation by subclass constructors, typically
      * implicit.)
+	 *
+	 * 唯一的构造方法。（对于子类构造方法的调用，一般是隐式的。）
+	 *
      */
     protected AbstractCollection() {
     }
 
     // Query Operations
+	// 查询操作
 
     /**
      * Returns an iterator over the elements contained in this collection.
+	 * 返回一个覆盖该集合所有元素的iterator构造器。
      *
      * @return an iterator over the elements contained in this collection
      */
@@ -82,6 +84,8 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      *
      * @implSpec
      * This implementation returns {@code size() == 0}.
+	 * 这个实现返回size为0。
+	 *
      */
     public boolean isEmpty() {
         return size() == 0;
@@ -93,6 +97,7 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @implSpec
      * This implementation iterates over the elements in the collection,
      * checking each element in turn for equality with the specified element.
+	 * 这个实现对该集合中的所有元素进行迭代，每次检查一个元素判断是否与具体元素相等。
      *
      * @throws ClassCastException   {@inheritDoc}
      * @throws NullPointerException {@inheritDoc}
@@ -124,6 +129,12 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * concurrent modification during iteration.  The {@code size} method is
      * called only as an optimization hint; the correct result is returned
      * even if the iterator returns a different number of elements.
+	 *
+	 * 这个实现通过集合的迭代器返回了一个包含所有元素的数组，以相同的顺序，存储在连续
+	 * 的集合元素中，从0开始。返回数组的长度等于集合迭代器返回的元素的个数，就算在迭代
+	 * 中长度进行了改变还是一样，这种情况可能发生在集合允许在迭代过程中进行修改。
+	 * 这个size方法只会在优化提示的时候进行调用（这句话怎么翻译？），就算迭代器返回了
+	 * 一个不同的元素数量也会返回正确的结果。
      *
      * <p>This method is equivalent to:
      *
