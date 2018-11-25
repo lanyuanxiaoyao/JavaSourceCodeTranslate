@@ -76,10 +76,10 @@ import java.util.Queue;
  *
  * 上面的HTML表格字符串显示可能不够直观，直观的表格如下图：
  *
- *          Throws-exception	Special—value   Blocks          Times out
- * Insert	    add(e)	       offer(e)	        put(e)	        offer(e, time, unit)
- * Remove	    remove()	    poll()	        take()	        poll(time, unit)
- * Examine	    element()	    peek()	       not-applicable	not applicable
+ *         Throws-exception  Special—value   Blocks        Times out
+ * Insert      add(e)          offer(e)      put(e)       offer(e, time, unit)
+ * Remove      remove()	       poll()        take()       poll(time, unit)
+ * Examine     element()       peek()     not-applicable  not applicable
  *
  *
  * <p>A {@code BlockingQueue} does not accept {@code null} elements.
