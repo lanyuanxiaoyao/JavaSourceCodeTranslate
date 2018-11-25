@@ -1123,7 +1123,7 @@ public class ArrayList<E> extends AbstractList<E>
         // Write out size as capacity for behavioral compatibility with clone()
         s.writeInt(size);
 
-        // Write out all elements in the proper order.
+        // Write out all elements in the proper order. 按照恰当的顺序写出全部的元素
         for (int i=0; i<size; i++) {
             s.writeObject(elementData[i]);
         }
@@ -1136,10 +1136,13 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Reconstitutes the {@code ArrayList} instance from a stream (that is,
      * deserializes it).
-     * @param s the stream
+     *
+     * 从一个流中重新构建一个ArrayList实例(意思就是, 进行反序列化操作)
+     *
+     * @param s the stream 流
      * @throws ClassNotFoundException if the class of a serialized object
-     *         could not be found
-     * @throws java.io.IOException if an I/O error occurs
+     *         could not be found 如果一个反序列化对象的类型无法被找到
+     * @throws java.io.IOException if an I/O error occurs 如果发生I/O错误
      */
     private void readObject(java.io.ObjectInputStream s)
         throws java.io.IOException, ClassNotFoundException {
@@ -1147,15 +1150,17 @@ public class ArrayList<E> extends AbstractList<E>
         // Read in size, and any hidden stuff
         s.defaultReadObject();
 
-        // Read in capacity
-        s.readInt(); // ignored
+        // Read in capacity 读进容量信息
+        s.readInt(); // ignored 忽略(这个容量值对构建ArrayList的操作没有帮助, 在这里直接读取但不处理, 可以理解为跳过)
 
         if (size > 0) {
             // like clone(), allocate array based upon size not capacity
+            // 像clone()一样, 基于size值而不是capacity值来申请内存
             SharedSecrets.getJavaObjectInputStreamAccess().checkArray(s, Object[].class, size);
             Object[] elements = new Object[size];
 
             // Read in all elements in the proper order.
+            // 按恰当的顺序读入全部元素
             for (int i = 0; i < size; i++) {
                 elements[i] = s.readObject();
             }
@@ -1169,12 +1174,21 @@ public class ArrayList<E> extends AbstractList<E>
     }
 
     /**
+     * 以下分关于迭代器的方法里, 注意区分ListIterator和普通Iterator, 其中ListIterator
+     * 是List子类特有的迭代器, Iterator是通用迭代器
+     */
+
+    /**
      * Returns a list iterator over the elements in this list (in proper
      * sequence), starting at the specified position in the list.
      * The specified index indicates the first element that would be
      * returned by an initial call to {@link ListIterator#next next}.
      * An initial call to {@link ListIterator#previous previous} would
      * return the element with the specified index minus one.
+     *
+     * 从list中指定的位置(下标)返回元素的List迭代器(按正确的顺序). 指定的下标指明了
+     * 通过ListIterator的next()方法第一次调用的时候返回的第一个元素.
+     * 第一次调用ListIterator的previous()方法将返回指定下标减一对应的元素.
      *
      * <p>The returned list iterator is <a href="#fail-fast"><i>fail-fast</i></a>.
      *
@@ -1189,6 +1203,8 @@ public class ArrayList<E> extends AbstractList<E>
      * Returns a list iterator over the elements in this list (in proper
      * sequence).
      *
+     * 返回一个list中所有元素的List迭代器(按正确的顺序)
+     *
      * <p>The returned list iterator is <a href="#fail-fast"><i>fail-fast</i></a>.
      *
      * @see #listIterator(int)
@@ -1200,26 +1216,29 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Returns an iterator over the elements in this list in proper sequence.
      *
+     * 按正确的顺序返回一个list所有元素的迭代器
+     *
      * <p>The returned iterator is <a href="#fail-fast"><i>fail-fast</i></a>.
      *
-     * @return an iterator over the elements in this list in proper sequence
+     * @return an iterator over the elements in this list in proper sequence 按正确的顺序返回一个list所有元素的迭代器
      */
     public Iterator<E> iterator() {
         return new Itr();
     }
 
     /**
-     * An optimized version of AbstractList.Itr
+     * An optimized version of AbstractList.Itr 一个AbstractList.Itr的优化版本
      */
     private class Itr implements Iterator<E> {
-        int cursor;       // index of next element to return
-        int lastRet = -1; // index of last element returned; -1 if no such
+        int cursor;       // index of next element to return 返回下一个元素的下标
+        int lastRet = -1; // index of last element returned; -1 if no such 返回上一个元素的下标, 如果没有就返回-1
         int expectedModCount = modCount;
 
-        // prevent creating a synthetic constructor
+        // prevent creating a synthetic constructor 防止创建一个合成的构造方法(意思是防止子类覆盖父类的构造方法)
         Itr() {}
 
         public boolean hasNext() {
+            // 如果cursor已经到了list的最后一个元素的下标, 就表示已经没有下一个元素了
             return cursor != size;
         }
 
@@ -1227,6 +1246,7 @@ public class ArrayList<E> extends AbstractList<E>
         public E next() {
             checkForComodification();
             int i = cursor;
+            // 先判断下标是否越界
             if (i >= size)
                 throw new NoSuchElementException();
             Object[] elementData = ArrayList.this.elementData;
@@ -1251,6 +1271,9 @@ public class ArrayList<E> extends AbstractList<E>
             }
         }
 
+        /**
+         * 支持lambda表达式的遍历剩下所有元素的方法
+         */
         @Override
         public void forEachRemaining(Consumer<? super E> action) {
             Objects.requireNonNull(action);
@@ -1263,6 +1286,7 @@ public class ArrayList<E> extends AbstractList<E>
                 for (; i < size && modCount == expectedModCount; i++)
                     action.accept(elementAt(es, i));
                 // update once at end to reduce heap write traffic
+                // 结尾的时候更新一次, 减少堆的写入
                 cursor = i;
                 lastRet = i - 1;
                 checkForComodification();
@@ -1276,7 +1300,9 @@ public class ArrayList<E> extends AbstractList<E>
     }
 
     /**
-     * An optimized version of AbstractList.ListItr
+     * An optimized version of AbstractList.ListItr 一个AbstractList.ListItr的优化版本
+     *
+     * (这里没有什么特别的操作, 就是在每一个操作的时候, 注意检查当前操作的位置是否是空或者越界)
      */
     private class ListItr extends Itr implements ListIterator<E> {
         ListItr(int index) {
@@ -1344,6 +1370,15 @@ public class ArrayList<E> extends AbstractList<E>
      * changes in the returned list are reflected in this list, and vice-versa.
      * The returned list supports all of the optional list operations.
      *
+     * 返回指定的fromIndex(包含fromIndex)和toIndex(不包含toIndex)之间的list的一部分
+     * 视图. (如果fromIndex和toIndex相等, 返回的list是空的). 返回的list是基于当前list
+     * 的, 所以在当前list发生的非结构化修改都会反映到返回的list中, 反过来也是一样.
+     * 返回的list支持全部可选list的操作.
+     *
+     * (这里说的subList会影响到原list的元素, 并不是subList持有了原有list中元素的引用,
+     * 然后直接在原list元素的引用上进行操作, 而是在subList内部提供的方法里使用ArrayList
+     * 的方法对操作进行了转换, 详见下面subList里的各个操作)
+     *
      * <p>This method eliminates the need for explicit range operations (of
      * the sort that commonly exist for arrays).  Any operation that expects
      * a list can be used as a range operation by passing a subList view
@@ -1356,11 +1391,22 @@ public class ArrayList<E> extends AbstractList<E>
      * {@link #lastIndexOf(Object)}, and all of the algorithms in the
      * {@link Collections} class can be applied to a subList.
      *
+     * 这个方法消除了对显式范围操作的需求(通常数组有排序的). 任何希望对list的某个范围
+     * 进行的操作都可以通过传递一个子list视图来代替整个list进行操作. 举个例子, 下面的
+     * 语句表示从list中移除某个范围内的所有元素:
+     * list.subList(from, to).clear();
+     * 类似的语句出现在indexOf(Object)和lastIndexOf(Object)中, 并且所有在Collections类
+     * 中的算法都可以接受一个子list视图
+     *
      * <p>The semantics of the list returned by this method become undefined if
      * the backing list (i.e., this list) is <i>structurally modified</i> in
      * any way other than via the returned list.  (Structural modifications are
      * those that change the size of this list, or otherwise perturb it in such
      * a fashion that iterations in progress may yield incorrect results.)
+     *
+     * 如果当前list通过除了返回子列表外的任何方式进行了结构化的修改, 那么通过这个方法
+     * 返回的子list的语义都会变成未定义. (结构化的修改指的是那些会改变list大小, 或是那些
+     * 会干扰当前正在进行的迭代使其可能产生不正确的结果的操作)
      *
      * @throws IndexOutOfBoundsException {@inheritDoc}
      * @throws IllegalArgumentException {@inheritDoc}
@@ -1370,6 +1416,11 @@ public class ArrayList<E> extends AbstractList<E>
         return new SubList<>(this, fromIndex, toIndex);
     }
 
+    /**
+     * SubList提供了和ArrayList几乎相同的主要操作, 主要是增删改查, SubList持有了原list的引用,
+     * 将每一个在SubList上进行的操作, 转换为在原list上的操作, 达到对SubList的操作映射到原list
+     * 上的效果.
+     */
     private static class SubList<E> extends AbstractList<E> implements RandomAccess {
         private final ArrayList<E> root;
         private final SubList<E> parent;
@@ -1377,7 +1428,7 @@ public class ArrayList<E> extends AbstractList<E>
         private int size;
 
         /**
-         * Constructs a sublist of an arbitrary ArrayList.
+         * Constructs a sublist of an arbitrary ArrayList. 从任意一个ArrayList中创建子list的构造方法
          */
         public SubList(ArrayList<E> root, int fromIndex, int toIndex) {
             this.root = root;
@@ -1388,7 +1439,7 @@ public class ArrayList<E> extends AbstractList<E>
         }
 
         /**
-         * Constructs a sublist of another SubList.
+         * Constructs a sublist of another SubList. 从另一个子list中创建一个子list的构造方法
          */
         private SubList(SubList<E> parent, int fromIndex, int toIndex) {
             this.root = parent.root;
@@ -1829,6 +1880,9 @@ public class ArrayList<E> extends AbstractList<E>
          * occur anywhere other than inside forEach itself.  The other
          * less-often-used methods cannot take advantage of most of
          * these streamlinings.
+         *
+         * 如果ArrayList是不可变的, 或是在结构上是不可变的(没有add, remove等的操作),
+         * 我们可以通过Arrays.spliterator实现该list的Spliterator. 
          */
 
         private int index; // current index, modified on advance/split
