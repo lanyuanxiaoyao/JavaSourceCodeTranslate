@@ -76,10 +76,10 @@ import java.util.Queue;
  *
  * 上面的HTML表格字符串显示可能不够直观，直观的表格如下图：
  *
- *          Throws-exception	Special—value   Blocks          Times out
- * Insert	    add(e)	       offer(e)	        put(e)	        offer(e, time, unit)
- * Remove	    remove()	    poll()	        take()	        poll(time, unit)
- * Examine	    element()	    peek()	       not-applicable	not applicable
+ *         Throws-exception  Special—value   Blocks        Times out
+ * Insert      add(e)          offer(e)      put(e)       offer(e, time, unit)
+ * Remove      remove()	       poll()        take()       poll(time, unit)
+ * Examine     element()       peek()     not-applicable  not applicable
  *
  *
  * <p>A {@code BlockingQueue} does not accept {@code null} elements.
@@ -97,6 +97,10 @@ import java.util.Queue;
  * A {@code BlockingQueue} without any intrinsic capacity constraints always
  * reports a remaining capacity of {@code Integer.MAX_VALUE}.
  *
+ * BlockQueue应该是有容量大小限制的。在任何给定的时间里，它可能有一个剩余容量的概念，这个是个什么样的东西呢，
+ * 就是说，当超过这个容量的时候，元素能被加入进去，并且不会被阻塞。
+ * BlockingQueue在没有任何固有容量大小约束的时候，默认大小为Integer.MAX_VALUE (也就是2147483647，一般这么大是没啥意义的)
+ *
  * <p>{@code BlockingQueue} implementations are designed to be used
  * primarily for producer-consumer queues, but additionally support
  * the {@link Collection} interface.  So, for example, it is
@@ -104,6 +108,10 @@ import java.util.Queue;
  * {@code remove(x)}. However, such operations are in general
  * <em>not</em> performed very efficiently, and are intended for only
  * occasional use, such as when a queued message is cancelled.
+ *
+ * BlockingQueue接口是被用来设计生产者消费者队列的首选，但是除此之外还需要支持Collection接口。
+ * 所以，比如，有可能通过使用remove()方法从队列中移除一个任意的元素。
+ * 但是，这样的操作通常执行得不是很有效，而且只打算偶尔使用，比如在取消队列消息时。
  *
  * <p>{@code BlockingQueue} implementations are thread-safe.  All
  * queuing methods achieve their effects atomically using internal
@@ -250,7 +258,7 @@ public interface BlockingQueue<E> extends Queue<E> {
      *         element prevents it from being added to this queue
      */
     boolean offer(E e, long timeout, TimeUnit unit)
-        throws InterruptedException;
+            throws InterruptedException;
 
     /**
      * Retrieves and removes the head of this queue, waiting if necessary
@@ -274,7 +282,7 @@ public interface BlockingQueue<E> extends Queue<E> {
      * @throws InterruptedException if interrupted while waiting
      */
     E poll(long timeout, TimeUnit unit)
-        throws InterruptedException;
+            throws InterruptedException;
 
     /**
      * Returns the number of additional elements that this queue can ideally
