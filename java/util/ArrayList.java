@@ -1726,6 +1726,9 @@ public class ArrayList<E> extends AbstractList<E>
             return "Index: "+index+", Size: "+this.size;
         }
 
+        /**
+         * 并发环境下subList被修改就会抛出异常
+         */
         private void checkForComodification() {
             if (root.modCount != modCount)
                 throw new ConcurrentModificationException();
@@ -1744,6 +1747,7 @@ public class ArrayList<E> extends AbstractList<E>
             checkForComodification();
 
             // ArrayListSpliterator not used here due to late-binding
+            // SubList里没有使用ArrayList的Spliterator因为它是延迟绑定的
             return new Spliterator<E>() {
                 private int index = offset; // current index, modified on advance/split
                 private int fence = -1; // -1 until used; then one past last index
@@ -1815,6 +1819,8 @@ public class ArrayList<E> extends AbstractList<E>
     }
 
     /**
+     * 支持lambda表达式的遍历方法
+     * 
      * @throws NullPointerException {@inheritDoc}
      */
     @Override
@@ -1833,6 +1839,8 @@ public class ArrayList<E> extends AbstractList<E>
      * Creates a <em><a href="Spliterator.html#binding">late-binding</a></em>
      * and <em>fail-fast</em> {@link Spliterator} over the elements in this
      * list.
+     *
+     * 在当前list上创建一个全部元素的延迟绑定和快速失败的Spliterator
      *
      * <p>The {@code Spliterator} reports {@link Spliterator#SIZED},
      * {@link Spliterator#SUBSIZED}, and {@link Spliterator#ORDERED}.
@@ -1882,7 +1890,11 @@ public class ArrayList<E> extends AbstractList<E>
          * these streamlinings.
          *
          * 如果ArrayList是不可变的, 或是在结构上是不可变的(没有add, remove等的操作),
-         * 我们可以通过Arrays.spliterator实现该list的Spliterator. 
+         * 我们可以通过Arrays.spliterator实现该list的Spliterator. 否则, 我们会在遍历
+         * 期间尽可能多的检测干扰, 并且减少性能的损耗. 我们依靠modCounts变量来实现这一
+         * 点. 这样的做法并不能保证检测到并发冲突, 而且有时候对待线程内的干扰过于保守,
+         * 但这在实际环境中足以发现足够多的问题, 是值得的. 为了做到这一点, 我们
+         * (1) 延迟初始化fence和expectedModCount, 
          */
 
         private int index; // current index, modified on advance/split
