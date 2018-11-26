@@ -1894,21 +1894,32 @@ public class ArrayList<E> extends AbstractList<E>
          * 期间尽可能多的检测干扰, 并且减少性能的损耗. 我们依靠modCounts变量来实现这一
          * 点. 这样的做法并不能保证检测到并发冲突, 而且有时候对待线程内的干扰过于保守,
          * 但这在实际环境中足以发现足够多的问题, 是值得的. 为了做到这一点, 我们
-         * (1) 延迟初始化fence和expectedModCount, 
+         * (1) 延迟初始化fence和expectedModCount, 直到我们需要提交最新的检查状态, 从而
+         * 提高精度. (这不适合创建非延迟加载值的Spliterator的SubList)
+         * (2) 我们只在forEach方法(对性能最敏感的方法)的结尾执行一次ConcurrentModificationException
+         * 检查, 当使用forEach方法(而不是迭代器)的时候, 我们通常仅在操作之后检查干扰, 
+         * 而不是在操作之前.
+         * 进一步的CME触发检查适用于所有其他可能的冲突, 例如null或者比size值小得多的
+         * elementData数组, 这些情况仅可能在受到干扰的情况下发生. 这就允许forEach的内部循环
+         * 无需进一步的检查就可以运行, 并且简化了lambda表达式的复杂度. 尽管这需要大量的检查,
+         * 但请注意, 在通常的情况下, 如list.stream().forEach(a), 除了forEach本身以外, 任何
+         * 地方都不会发生检查或其他的计算. 其他不常用的方法无法使用大多数这一类的流操作.
          */
 
-        private int index; // current index, modified on advance/split
-        private int fence; // -1 until used; then one past last index
-        private int expectedModCount; // initialized when fence set
+        private int index; // current index, modified on advance/split 当切割或advance是的当前索引(下标)
+        private int fence; // -1 until used; then one past last index 在被使用之前值为-1, 被使用之后指向最后一个索引(下标)
+        private int expectedModCount; // initialized when fence set 在fence被使用的时候初始化
 
-        /** Creates new spliterator covering the given range. */
+        /** 
+         * Creates new spliterator covering the given range. 创建新的覆盖指定范围的spliterator
+         */
         ArrayListSpliterator(int origin, int fence, int expectedModCount) {
             this.index = origin;
             this.fence = fence;
             this.expectedModCount = expectedModCount;
         }
 
-        private int getFence() { // initialize fence to size on first use
+        private int getFence() { // initialize fence to size on first use 在第一次被调用的时候初始化fence
             int hi; // (a specialized variant appears in method forEach)
             if ((hi = fence) < 0) {
                 expectedModCount = modCount;
@@ -1994,6 +2005,9 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Removes all elements satisfying the given predicate, from index
      * i (inclusive) to index end (exclusive).
+     * 
+     * 移除从索引(下标)为i(包含)到索引(下标)为end(不包含)之间所有满足lambda
+     * 表达式的元素.
      */
     boolean removeIf(Predicate<? super E> filter, int i, final int end) {
         Objects.requireNonNull(filter);
