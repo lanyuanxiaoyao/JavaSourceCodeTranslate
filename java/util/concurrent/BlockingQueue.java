@@ -123,6 +123,10 @@ import java.util.Queue;
  * {@code addAll(c)} to fail (throwing an exception) after adding
  * only some of the elements in {@code c}.
  *
+ * BlockingQueue接口实现是线程安全的。所有的队列方法，以原子性来实现它们的效果，通过使用内部的锁或者其它形式的并发控制。
+ * 然而，跟容器容量有关的操作：addAll,containsAll,retainAll,retainAll是没有必要做到原子性的，除非在实现中另外指定。
+ * 所以，比如，addAll(c)只可能在加入一些元素到c失败之后，才失败（抛出一个异常）。
+ *
  * <p>A {@code BlockingQueue} does <em>not</em> intrinsically support
  * any kind of &quot;close&quot; or &quot;shutdown&quot; operation to
  * indicate that no more items will be added.  The needs and usage of
@@ -131,10 +135,17 @@ import java.util.Queue;
  * <em>end-of-stream</em> or <em>poison</em> objects, that are
  * interpreted accordingly when taken by consumers.
  *
+ * BlockingQueue从本质上并不支持close或者shutdown操作以表示不能再计加入更多的元素。
+ * 这些特性的需求和使用通常需要依赖于相应的实现。比如，一种比较通常的策略是让生产者插入特殊的 结束流，或者特殊的有害对象（用来close Queue），
+ * 当消费者采取这些措施时，就会作出相应的解释。
+ *
  * <p>
  * Usage example, based on a typical producer-consumer scenario.
  * Note that a {@code BlockingQueue} can safely be used with multiple
  * producers and multiple consumers.
+ *
+ * demo,基于一个典型的生产者-消费者场景。请注意，BlockingQueue可以安全地被多个生产者和消费者使用。
+ *
  * <pre> {@code
  * class Producer implements Runnable {
  *   private final BlockingQueue queue;
@@ -170,6 +181,8 @@ import java.util.Queue;
  *   }
  * }}</pre>
  *
+ * 代码没啥好解释的，这里实现的是 take和put 方法，这个是会被阻塞的方法；
+ *
  * <p>Memory consistency effects: As with other concurrent
  * collections, actions in a thread prior to placing an object into a
  * {@code BlockingQueue}
@@ -177,10 +190,14 @@ import java.util.Queue;
  * actions subsequent to the access or removal of that element from
  * the {@code BlockingQueue} in another thread.
  *
+ * 内存一致性影响：和其它并发的Collections一样，在一个线程中去放置一个元素到BlockingQueue发生在前，
+ * 或者在另外一个线程里访问或者删除这个元素发生在之后。
+ *
  * <p>This interface is a member of the
  * <a href="{@docRoot}/java.base/java/util/package-summary.html#CollectionsFramework">
  * Java Collections Framework</a>.
  *
+ * 这个接口（BlockingQueue）是Java Collections框架大家族的一员。
  * @since 1.5
  * @author Doug Lea
  * @param <E> the type of elements held in this queue
