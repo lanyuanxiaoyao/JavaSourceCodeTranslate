@@ -918,6 +918,8 @@ public class ArrayList<E> extends AbstractList<E>
         Object[] elementData;
         final int s;
         // 如果剩余的数组空间不足以放下传入的Collection的全部元素, 就增长numNew个数组空间
+        // 值得关注的是, 这里的增长并不是增长到刚好可以当下Collection的全部元素, 而是直接
+        // 增长Collection的长度个元素的位置, 大概是为之后可能出现的add预留一点位置吧
         if (numNew > (elementData = this.elementData).length - (s = size))
             elementData = grow(s + numNew);
         System.arraycopy(a, 0, elementData, s, numNew);
@@ -954,6 +956,7 @@ public class ArrayList<E> extends AbstractList<E>
             return false;
         Object[] elementData;
         final int s;
+        // 判断是否需要增加数组缓存的容量
         if (numNew > (elementData = this.elementData).length - (s = size))
             elementData = grow(s + numNew);
 
@@ -1001,7 +1004,7 @@ public class ArrayList<E> extends AbstractList<E>
     /** 
     * Erases the gap from lo to hi, by sliding down following elements. 
     * 
-    * 通过向前滑动的方式来擦出(下标为)lo(low)到hi(high)之间的空缺
+    * 通过向前滑动的方式来擦除(下标为)lo(low)到hi(high)之间的空缺
     */
     private void shiftTailOverGap(Object[] es, int lo, int hi) {
         System.arraycopy(es, hi, es, lo, size - hi);
@@ -1026,7 +1029,6 @@ public class ArrayList<E> extends AbstractList<E>
      *
      * 构建一个索引越界异常的详细信息. 在错误代码的许多可能的重构中, 这个
      * 描述在服务器和客户端的虚拟机中有更好的表现.
-     * 
      */
     private String outOfBoundsMsg(int index) {
         return "Index: "+index+", Size: "+size;
@@ -1036,7 +1038,6 @@ public class ArrayList<E> extends AbstractList<E>
      * A version used in checking (fromIndex > toIndex) condition
      *
      * 一个用于检查条件fromIndex大于toIndex的(异常信息重构的)版本
-     *
      */
     private static String outOfBoundsMsg(int fromIndex, int toIndex) {
         return "From Index: " + fromIndex + " > To Index: " + toIndex;
@@ -1097,7 +1098,8 @@ public class ArrayList<E> extends AbstractList<E>
         int r;
         // Optimize for initial run of survivors 关于保留元素的运行初始化的优化
         // 这里是为了找到list中第一个存在于目标集合中的元素, 这个位置代表运行开始的标志, 如果是retain, 那么从这个位置开始移除元素
-        // 如果是remove, 那么就从这个位置开始保留元素, 需要仔细体会`!= complement`这个比较的作用
+        // 如果是remove, 那么就从这个位置开始保留元素, 需要仔细体会`!= complement`和`== complement`这两个比较的作用
+        // 实际上这个方法总是遍历了from和end之间的元素, 通过complement变量来标记当前遍历到的元素是否保留
         for (r = from;; r++) {
             if (r == end)
                 return false;
@@ -1112,6 +1114,7 @@ public class ArrayList<E> extends AbstractList<E>
         } catch (Throwable ex) {
             // Preserve behavioral compatibility with AbstractCollection,
             // even if c.contains() throws.
+            // 保持与AbstractCollection行为的兼容性, 即使是c.contains()抛出了异常
             System.arraycopy(es, r, es, w, end - r);
             w += end - r;
             throw ex;
@@ -1143,9 +1146,11 @@ public class ArrayList<E> extends AbstractList<E>
         s.defaultWriteObject();
 
         // Write out size as capacity for behavioral compatibility with clone()
+        // 将size值作为容量写进流里, 保证与clone()方法行为的兼容性
+        // clone()方法就是使用实际存储的元素的数量来作为容量的
         s.writeInt(size);
 
-        // Write out all elements in the proper order. 按照恰当的顺序写出全部的元素
+        // Write out all elements in the proper order. 按照正确的顺序写出全部的元素
         for (int i=0; i<size; i++) {
             s.writeObject(elementData[i]);
         }
@@ -1182,7 +1187,7 @@ public class ArrayList<E> extends AbstractList<E>
             Object[] elements = new Object[size];
 
             // Read in all elements in the proper order.
-            // 按恰当的顺序读入全部元素
+            // 按正确的顺序读入全部元素
             for (int i = 0; i < size; i++) {
                 elements[i] = s.readObject();
             }
@@ -2004,7 +2009,7 @@ public class ArrayList<E> extends AbstractList<E>
         }
     }
 
-    // A tiny bit set implementation
+    // A tiny bit set implementation 一个小型bit set的实现
 
     private static long[] nBits(int n) {
         return new long[((n - 1) >> 6) + 1];
@@ -2035,12 +2040,14 @@ public class ArrayList<E> extends AbstractList<E>
         Objects.requireNonNull(filter);
         int expectedModCount = modCount;
         final Object[] es = elementData;
-        // Optimize for initial run of survivors
+        // Optimize for initial run of survivors 对幸存者初始化运行的优化
         for (; i < end && !filter.test(elementAt(es, i)); i++)
             ;
         // Tolerate predicates that reentrantly access the collection for
         // read (but writers still get CME), so traverse once to find
         // elements to delete, a second pass to physically expunge.
+        // 允许lambda表达式重新访问集合进行读取(但写入的时候仍然会收到ConcurrentModificationException
+        // 异常), 因此遍历一次找到要删除的元素, 再遍历第二次进行物理删除
         if (i < end) {
             final int beg = i;
             final long[] deathRow = nBits(end - beg);
@@ -2064,6 +2071,9 @@ public class ArrayList<E> extends AbstractList<E>
         }
     }
 
+    /**
+     * 将list中的全部元素使用operator表达式的结果替换一遍
+     */
     @Override
     public void replaceAll(UnaryOperator<E> operator) {
         replaceAllRange(operator, 0, size);
@@ -2080,6 +2090,9 @@ public class ArrayList<E> extends AbstractList<E>
             throw new ConcurrentModificationException();
     }
 
+    /**
+     * 排序
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void sort(Comparator<? super E> c) {
