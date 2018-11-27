@@ -65,7 +65,9 @@ import jdk.internal.misc.SharedSecrets;
  *
  * (划重点)ArrayList的实现不是同步(线程安全)的. 如果有多个线程并发访问同一个ArrayList
  * 实例, 并且有一个线程修改了该实例的结构(内容), 你必须在ArrayList外部保证并发操
- * 作的线程安全.
+ * 作的线程安全. (一个结构化修改意为任意的增加或删除一个或多个元素的操作, 或显式
+ * 调整存储数组的大小; 仅仅设置某个元素的值不是结构化修改.) (在外部保证并发操作的安全)
+ * 通常是通过封装ArrayList, 在一些对象上进行同步来实现的.
  *
  * If no such object exists, the list should be "wrapped" using the
  * {@link Collections#synchronizedList Collections.synchronizedList}
@@ -76,6 +78,7 @@ import jdk.internal.misc.SharedSecrets;
  * 如果没有(在外部保证线程安全)这样的对象存在, 应该使用 Collections.synchronizedList()
  * 方法将这个list包装起来. 这个操作最好在list实例创建的时候就进行, 避免非同步
  * (线程安全)的操作访问该list.
+ * List list = Collections.synchronizedList(new ArrayList(...));
  *
  * <p id="fail-fast">
  * The iterators returned by this class's {@link #iterator() iterator} and
@@ -89,7 +92,11 @@ import jdk.internal.misc.SharedSecrets;
  * than risking arbitrary, non-deterministic behavior at an undetermined
  * time in the future.
  *
- * 通过iterator() 和 listIterator(int) 两个方法可以得到list的迭代器. 
+ * 通过iterator() 和 listIterator(int) 两个方法得到的list的迭代器是快速失败的: 
+ * 如果list在迭代器创建之后的任何时候发生了结构化修改, 除了使用迭代器自身提供的
+ * remove() 和 add(Object) 方法, 迭代器会抛出ConcurrentModificationException
+ * 异常. 因此, 在面对并发修改, 迭代器会立刻(返回)失败, 而不是在未来某个不确定的时间
+ * 出现有风险的, 不确定的行为.
  *
  * <p>Note that the fail-fast behavior of an iterator cannot be guaranteed
  * as it is, generally speaking, impossible to make any hard guarantees in the
@@ -98,6 +105,11 @@ import jdk.internal.misc.SharedSecrets;
  * Therefore, it would be wrong to write a program that depended on this
  * exception for its correctness:  <i>the fail-fast behavior of iterators
  * should be used only to detect bugs.</i>
+ *
+ * 请注意, 迭代器快速失败的行为并不能提供保证, 一般来说, 不可能在不对并发修改进行同步
+ * 的情况下做出任何保证. 迭代器发生快速失败的时候会尽可能抛出ConcurrentModificationException.
+ * 因此, 依赖这个异常来保证其正确性的程序可能会出错: 迭代器的快速失败行为仅仅应该被用于
+ * 调试.
  *
  * <p>This class is a member of the
  * <a href="{@docRoot}/java.base/java/util/package-summary.html#CollectionsFramework">
@@ -145,7 +157,7 @@ public class ArrayList<E> extends AbstractList<E>
      *
      * (尽管默认的初始化容量是10, 但是Java仍然不打算在还未使用list的时候就白白浪费
      * 掉这宝贵的内存, 所以就有了这个属性, 这个属性表示的是构造了list但还没使用之前
-     * 的"空"列表, 只有在第一个元素被添加进来的时候, 才会真正去申请容量大小的内存)
+     * 的"空"list, 只有在第一个元素被添加进来的时候, 才会真正去申请容量大小的内存)
      */
     private static final Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = {};
 
@@ -160,7 +172,7 @@ public class ArrayList<E> extends AbstractList<E>
      * 的时候, 会在第一次添加元素的时候自动把容量增加到DEFAULT_CAPACITY(默认的初始
      * 化容量)
      */
-    transient Object[] elementData; // non-private to simplify nested class access
+    transient Object[] elementData; // non-private to simplify nested class access 简化嵌套类访问的非私有方法
 
     /**
      * The size of the ArrayList (the number of elements it contains).
@@ -174,9 +186,9 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Constructs an empty list with the specified initial capacity.
      *
-     * 构造一个指定的容量的空列表
+     * 构造一个指定的容量的空list
      *
-     * @param  initialCapacity  the initial capacity of the list 列表初始化的容量
+     * @param  initialCapacity  the initial capacity of the list list初始化的容量
      * @throws IllegalArgumentException if the specified initial capacity
      *         is negative 如果指定的容量是一个非法的值
      */
@@ -195,7 +207,7 @@ public class ArrayList<E> extends AbstractList<E>
     /**
      * Constructs an empty list with an initial capacity of ten.
      *
-     * 构造一个容量为10的空列表
+     * 构造一个容量为10的空list
      */
     public ArrayList() {
         this.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;
@@ -217,6 +229,11 @@ public class ArrayList<E> extends AbstractList<E>
         if ((size = elementData.length) != 0) {
             // defend against c.toArray (incorrectly) not returning Object[] 防止 c.toArray() (错误地)不返回Object[]对象
             // (see e.g. https://bugs.openjdk.java.net/browse/JDK-6260652)
+            // 简单说明一下这个bug, 在JDK文档中定义了如果List子类使用了不带参数的toArray()方法, 
+            // 那么就应该返回Object[]类型的数组, 但是如果使用某个类型的数组来构建一个新的ArrayList, 
+            // 如String[], 那么使用toArray()返回的仍然是String[]类型数组, 这将导致在之后的代码如果
+            // 试图向返回的数组中插入非String类型的值, 就会报错. 在之前的代码里, toArray()方法是
+            // 使用ArrayList的clone()方法来构建返回的数组的.
             if (elementData.getClass() != Object[].class)
                 elementData = Arrays.copyOf(elementData, size, Object[].class);
         } else {
@@ -232,9 +249,14 @@ public class ArrayList<E> extends AbstractList<E>
      *
      * 把ArrayList实例的容量设置为实例当前的实际大小. 程序可以使用这个操作来减少ArrayList
      * 实例占用的存储
+     *
+     * (这是因为ArrayList是一批一批来申请内存, 而不是需要一个再申请一个, 所以在后期, 每增长一次
+     * 都会导致数组缓存中有大量的位置是空着的, 如果你的代码确定了这个ArrayList不再修改或者只增长
+     * 少量的内容, 那么就可以使用这个方法来释放没有被使用的数组缓存的空间)
      */
     public void trimToSize() {
         modCount++;
+        // 比较数组缓存的大小和实际存储元素的数量
         if (size < elementData.length) {
             // 如果当前list不为空的话, 那么就将当前的元素复制到一个实际大小的数组当中
             elementData = (size == 0)
@@ -306,7 +328,7 @@ public class ArrayList<E> extends AbstractList<E>
      * the given minimum capacity is greater than MAX_ARRAY_SIZE.
      *
      * 至少返回和指定的(最小)容量一样大的容量值.
-     * 如果足够的话, 返回当前容量增长50%后的容量值.
+     * 如果容量已满的话, 返回当前容量增长50%后的容量值.
      * 除非给定的最小容量值比MAX_ARRAY_SIZE的大小更大, 不然不会返回MAX_ARRAY_SIZE
      *
      * @param minCapacity the desired minimum capacity 指定的最小容量
@@ -449,7 +471,7 @@ public class ArrayList<E> extends AbstractList<E>
      * Returns a shallow copy of this {@code ArrayList} instance.  (The
      * elements themselves are not copied.)
      *
-     * 返回一个当前ArrayList的浅复制. (不复制list包含的元素本身)
+     * 返回一个当前ArrayList的深复制. (不复制list包含的元素本身)
      *
      * @return a clone of this {@code ArrayList} instance
      */
@@ -461,6 +483,7 @@ public class ArrayList<E> extends AbstractList<E>
             return v;
         } catch (CloneNotSupportedException e) {
             // this shouldn't happen, since we are Cloneable
+            // 自从我们实现了Cloneable接口, 这个异常就不应该发生了
             throw new InternalError(e);
         }
     }
@@ -499,7 +522,7 @@ public class ArrayList<E> extends AbstractList<E>
      * allocated with the runtime type of the specified array and the size of
      * this list.
      *
-     * 按照合适的序列(从第一个到最后一个)返回一个包含list中存储的所有元素的数组; 运行时
+     * 按照正确的顺序(从第一个到最后一个)返回一个包含list中存储的所有元素的数组; 运行时
      * 返回的数组的类型就是(参数)指定的数组的类型. 如果(参数)指定的数组能放得下list(的全部元素), 
      * 那么就会直接返回这个数组(并将list的元素放入数组中).
      * 否则, 就会申请一个新的数组, 其类型与指定的数组类型相同, 大小则是list的大小.
@@ -534,13 +557,12 @@ public class ArrayList<E> extends AbstractList<E>
      *
      * @throws NullPointerException if the specified array is null 如果(参数)指定的数组为null
      *
-     * 这个方法是为了得到一个指定类型的, 存储所有list元素的数组, 参数是一个数组,
+     * (这个方法是为了得到一个指定类型的, 存储所有list元素的数组, 参数是一个数组,
      * 如果传入的数组的大小比list大, 就直接用这个数组存list的元素, 并将list结尾
      * 的下一个数组元素设为null. 如果这个数组不如list大, 就直接new一个新的数组,
      * 用来放list的元素, 当然啦, 这个数组的大小就和list是一样的了.
      * 所以如果传入的数组比list要大的话, 那么方法返回的数组就是传入的数组, 大小就
-     * 是原来的大小, 而不是list的大小.
-     *
+     * 是原来的大小, 而不是list的大小.)
      */
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
@@ -681,7 +703,7 @@ public class ArrayList<E> extends AbstractList<E>
      * Shifts any subsequent elements to the left (subtracts one from their
      * indices).
      *
-     * 移除list中指定位置的元素. 向左移动改位置之后的所有元素.
+     * 移除list中指定位置的元素. 向左移动该位置之后的所有元素.
      *
      * @param index the index of the element to be removed 将要被移出的元素的位置(下标)
      * @return the element that was removed from the list 被移出list的元素
@@ -1404,7 +1426,7 @@ public class ArrayList<E> extends AbstractList<E>
      * those that change the size of this list, or otherwise perturb it in such
      * a fashion that iterations in progress may yield incorrect results.)
      *
-     * 如果当前list通过除了返回子列表外的任何方式进行了结构化的修改, 那么通过这个方法
+     * 如果当前list通过除了返回子list外的任何方式进行了结构化的修改, 那么通过这个方法
      * 返回的子list的语义都会变成未定义. (结构化的修改指的是那些会改变list大小, 或是那些
      * 会干扰当前正在进行的迭代使其可能产生不正确的结果的操作)
      *
