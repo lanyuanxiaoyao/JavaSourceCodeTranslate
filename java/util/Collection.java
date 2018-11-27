@@ -1,26 +1,6 @@
 /*
  * Copyright (c) 1997, 2018, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
  */
 
 package java.util;
@@ -40,8 +20,15 @@ import java.util.stream.StreamSupport;
  * is typically used to pass collections around and manipulate them where
  * maximum generality is desired.
  *
+ * (Collection)是集合体系的根接口. 一个集合表示一组对象, 被称为集合的元素. 一些
+ * 集合允许出现重复的元素, 而另一些不允许. 一些集合是有序的, 而另一些是无序的.
+ * JDK没有直接提供这个接口的任何实现方式: 它提供了许多具体的子接口, 比如Set和List.
+ * 这个接口通常用于传递集合并对其进行操作, 这需要接口提供最大的通用方法.
+ *
  * <p><i>Bags</i> or <i>multisets</i> (unordered collections that may contain
  * duplicate elements) should implement this interface directly.
+ *
+ * Bags 或 multisets(可包含重复元素的无序集合) 应该直接实现该接口.
  *
  * <p>All general-purpose {@code Collection} implementation classes (which
  * typically implement {@code Collection} indirectly through one of its
@@ -55,11 +42,22 @@ import java.util.stream.StreamSupport;
  * constructors) but all of the general-purpose {@code Collection}
  * implementations in the Java platform libraries comply.
  *
+ * 所有通用接口Collection的实现类(通常是通过实现了Collection的子接口间接实现
+ * Collection接口)都应该提供两个"标准"构造方法: 一个空(没有参数)构造方法, 用来
+ * 创建一个空集合, 和一个只有一个类型为Collection的参数的构造方法, 用该参数集合
+ * 中完全相同的元素创建一个新的集合. 后者可以让用户复制任意一个集合, 生成所需
+ * 实现类的等效集合. 然而(在Java中)没办法强制执行这个约定(因为接口不能包含构造方法),
+ * 但在Java官方库所有通用接口Collection的实现类都符合这个约定. 
+ *
  * <p>Certain methods are specified to be
  * <i>optional</i>. If a collection implementation doesn't implement a
  * particular operation, it should define the corresponding method to throw
  * {@code UnsupportedOperationException}. Such methods are marked "optional
  * operation" in method specifications of the collections interfaces.
+ *
+ * 某些方法是被指定为可选的. 如果一个集合的实现类没有实现一个可选操作, 它应该定义
+ * 相应的方法来抛出UnsupportedOperationException异常. 这些方法在集合接口规范中
+ * 被标记为"可选操作".
  *
  * <p><a id="optional-restrictions"></a>Some collection implementations
  * have restrictions on the elements that they may contain.
@@ -76,6 +74,14 @@ import java.util.stream.StreamSupport;
  * Such exceptions are marked as "optional" in the specification for this
  * interface.
  *
+ * 一些集合的实现类对它们可能会包含的元素有限制. 举个例子, 一些实现类禁止(包含)null元素,
+ * 一些实现类对它们(包含)的元素类型有限制. 试图添加一个非法的元素会使集合抛出一个
+ * unchecked的异常, 通常是NullPointerException或者ClassCastException.
+ * 试图查询一个非法元素是否存在集合里, 会使集合抛出一个异常, 或者简单地返回一个false;
+ * 一些实现类会是前者(抛异常), 一些实现类会是后者(返回false). 简单来说, 试图在集合里
+ * 操作一个非法元素, 其结果不会导致非法元素插入到集合中, 这可能会导致抛出一个异常, 或者会
+ * 操作成功, 这取决于实现类. 因此异常在这个接口的规范中被标记为可选的.
+ *
  * <p>It is up to each collection to determine its own synchronization
  * policy.  In the absence of a stronger guarantee by the
  * implementation, undefined behavior may result from the invocation
@@ -83,6 +89,10 @@ import java.util.stream.StreamSupport;
  * thread; this includes direct invocations, passing the collection to
  * a method that might perform invocations, and using an existing
  * iterator to examine the collection.
+ *
+ * 集合(实现类)的同步策略由它们自己决定. 在没有强力(的同步策略)保证的实现类, 
+ * 被其他线程调用任何一个方法导致集合被改变都会导致未知的行为(后果); 包括直接调用, 
+ * 传递集合给一个可能会调用(集合)的方法, 并使用现有的迭代器来检查集合.
  *
  * <p>Many methods in Collections Framework interfaces are defined in
  * terms of the {@link Object#equals(Object) equals} method.  For example,
@@ -216,6 +226,9 @@ import java.util.stream.StreamSupport;
  * @see     Arrays
  * @see     AbstractCollection
  * @since 1.2
+ *
+ * @translator LanyuanXiaoyao
+ * @date 2018.11.27
  */
 
 public interface Collection<E> extends Iterable<E> {

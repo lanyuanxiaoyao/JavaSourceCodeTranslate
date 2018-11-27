@@ -5,10 +5,11 @@ Java源码阅读计划
 
 *update by lanyuanxiaoyao at 2018.11.13*
 
-# Schedule
+# 进度
 - concurrent
   - BlockingQueue (Translating...)
-- ArrayList (Finished)
+- ArrayList (Finished by lanyuanxiaoyao)
+- Collection (Translating... by lanyuanxiaoyao)
 
 # Q&A
 
