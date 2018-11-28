@@ -9,9 +9,9 @@ Java源码阅读计划
 源码版本: [JDK 11.0.1 General-Availability Release](https://jdk.java.net/11/)
 
 # 译者
-LanyuanXiaoyao [Github](https://github.com/lanyuanxiaoyao) [Blog](http://lanyuanxiaoyao.com/)
-PengTan [Github](https://github.com/enterprising)
-Gintoms [Github](https://github.com/Gintoms)
+LanyuanXiaoyao [Github](https://github.com/lanyuanxiaoyao) [Blog](http://lanyuanxiaoyao.com/)  
+PengTan [Github](https://github.com/enterprising)  
+Gintoms [Github](https://github.com/Gintoms)  
 
 # 进度
 - concurrent
