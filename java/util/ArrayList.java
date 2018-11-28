@@ -555,7 +555,7 @@ public class ArrayList<E> extends AbstractList<E>
      * any null elements.)
      *
      * 如果(参数)指定的数组能放得下list, 并且数组的空间还有剩余(数组的元素比list的要多), 那么
-     * 数组中在集合长度之后紧接着的一个数组元素将被设为null. (这在调用者确认list中没有包含null
+     * 数组中在集合长度之后紧接着的一个数组元素将被设为null. (这仅在调用者确认list中没有包含null
      * 元素的情况下, 确定list长度的时候非常管用.)
      *
      * @param a the array into which the elements of the list are to

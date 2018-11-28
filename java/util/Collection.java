@@ -366,7 +366,10 @@ public interface Collection<E> extends Iterable<E> {
      * (unless this collection is an instance of some class that provides a
      * guarantee).
      *
-     * @return an {@code Iterator} over the elements in this collection
+     * 返回一个包含集合所有元素的迭代器. 关于返回的元素的顺序没有任何保证(除非当前集合
+     * 提供了保证).
+     *
+     * @return an {@code Iterator} over the elements in this collection 一个包含集合所有元素的迭代器
      */
     Iterator<E> iterator();
 
@@ -377,10 +380,18 @@ public interface Collection<E> extends Iterable<E> {
      * the same order. The returned array's {@linkplain Class#getComponentType
      * runtime component type} is {@code Object}.
      *
+     * 返回一个包含当前集合所有元素的数组. 如果当前集合通过迭代器对它包含的元素的顺序
+     * 作出了任何保证, 这个方法返回的元素也必须是按(和迭代器)相同的顺序. 返回的数组的
+     * 元素的类型是Object.
+     *
      * <p>The returned array will be "safe" in that no references to it are
      * maintained by this collection.  (In other words, this method must
      * allocate a new array even if this collection is backed by an array).
      * The caller is thus free to modify the returned array.
+     *
+     * 返回的数组是"安全"的, 因为集合没有持有(数组元素)的引用. (换句话说, 这个方法
+     * 必须申请一个新的数组即使这个集合是基于一个数组的). 调用者因此可以自由地修改
+     * 返回的数组.
      *
      * @apiNote
      * This method acts as a bridge between array-based and collection-based APIs.
@@ -389,8 +400,14 @@ public interface Collection<E> extends Iterable<E> {
      * array, or use {@link #toArray(IntFunction)} to control the runtime type
      * of the array.
      *
+     * 这个方法是扮演着数组和集合之间的桥梁的API. (这个方法)返回的数组的运行时类型是Object[].
+     * 使用toArray(T[])方法可以重用一个已经存在的数组, 或是使用toArray(IntFunction)方法来
+     * 控制数组的运行时类型.
+     *
      * @return an array, whose {@linkplain Class#getComponentType runtime component
      * type} is {@code Object}, containing all of the elements in this collection
+     * 
+     * 一个数组, 元素运行时类型是Object, 包含所有集合里的元素.
      */
     Object[] toArray();
 
@@ -401,6 +418,11 @@ public interface Collection<E> extends Iterable<E> {
      * Otherwise, a new array is allocated with the runtime type of the
      * specified array and the size of this collection.
      *
+     * 返回一个包含当前集合所有元素的数组; 其返回的数组的运行时类型就是指定的数组(的类型).
+     * 如果指定的数组能够放得下集合(的全部元素), 如果(参数)指定的数组能放得下list(的全部
+     * 元素), 那么就会直接返回这个数组(并将list的元素放入数组中). 否则, 就会申请一个新的
+     * 数组, 其类型与指定的数组类型相同, 大小则是list的大小.
+     *
      * <p>If this collection fits in the specified array with room to spare
      * (i.e., the array has more elements than this collection), the element
      * in the array immediately following the end of the collection is set to
@@ -408,9 +430,16 @@ public interface Collection<E> extends Iterable<E> {
      * collection <i>only</i> if the caller knows that this collection does
      * not contain any {@code null} elements.)
      *
+     * 如果(参数)指定的数组能放得下list, 并且数组的空间还有剩余(数组的元素比list的要
+     * 多), 那么数组中在集合长度之后紧接着的一个数组元素将被设为null. (这仅在调用者确认
+     * list中没有包含null元素的情况下, 确定list长度的时候非常管用.)
+     *
      * <p>If this collection makes any guarantees as to what order its elements
      * are returned by its iterator, this method must return the elements in
      * the same order.
+     *
+     * 如果当前集合通过迭代器对它包含的元素的顺序作出了任何保证, 这个方法返回的元素也必
+     * 须是按(和迭代器)相同的顺序.
      *
      * @apiNote
      * This method acts as a bridge between array-based and collection-based APIs.
@@ -418,6 +447,10 @@ public interface Collection<E> extends Iterable<E> {
      * Use {@link #toArray()} to create an array whose runtime type is {@code Object[]},
      * or use {@link #toArray(IntFunction)} to control the runtime type of
      * the array.
+     *
+     * 这个方法是扮演着数组和集合之间的桥梁的API. (这个方法)返回的数组的运行时类型是Object[].
+     * 使用toArray(T[])方法可以重用一个已经存在的数组, 或是使用toArray(IntFunction)方法来
+     * 控制数组的运行时类型.
      *
      * <p>Suppose {@code x} is a collection known to contain only strings.
      * The following code can be used to dump the collection into a previously
