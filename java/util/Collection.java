@@ -131,6 +131,14 @@ import java.util.stream.StreamSupport;
  * the specified behavior of underlying {@link Object} methods wherever the
  * implementor deems it appropriate.
  *
+ * Collections接口框架里的许多方法都是基于equals方法定义的. 举个例子, contains(Object o)
+ * 方法在规范里是这么说的: "当且仅当这个集合中存在至少一个元素e, 使得
+ * `o==null ? e==null : o.equals(e)`, 那么返回true." 这个规范不应该被解释为对于任意
+ * 一个非空参数o都将使得对于任意的元素e调用o.equals(e). 实现类可以自由地优化实现(equals方法)
+ * 从而避免equals方法的调用, 举个例子, 可以首先比较两个元素的哈希值. (规范将保证两个不同对象
+ * 的哈希值不相等.) 一般来说, 只要实现者认为合适, 大多数Collections接口框架的实现类都可以自
+ * 由地利用底层Object的指定方法.
+ *
  * <p>Some collection operations which perform recursive traversal of the
  * collection may fail with an exception for self-referential instances where
  * the collection directly or indirectly contains itself. This includes the
@@ -138,7 +146,14 @@ import java.util.stream.StreamSupport;
  * methods. Implementations may optionally handle the self-referential scenario,
  * however most current implementations do not do so.
  *
+ * 当集合直接或者间接包含自身的时候, 一些集合的操作在执行递归遍历集合的时候可能会失败并
+ * 抛出引用自身实例的异常. (出现这种情况的方法)包括clone(), equals(), hashcode() 和
+ * toString()方法. 实现类可以选择如何处理自引用的方式, 然而大部分(集合实现类)当前没有
+ * 处理这种情况.
+ *
  * <h2><a id="view">View Collections</a></h2>
+ *
+ * 视图集合
  *
  * <p>Most collections manage storage for elements they contain. By contrast, <i>view
  * collections</i> themselves do not store elements, but instead they rely on a
@@ -162,7 +177,19 @@ import java.util.stream.StreamSupport;
  * modifications to the backing collection will be visible to the Iterator
  * during iteration.
  *
+ * 大多数的集合负责管理他们包含的元素的存储空间. 相比之下, 视图集合本身不存储元素, 而是
+ * 依赖于支持集合来存储实际元素. 视图集合自身未处理的操作被委托给了支持集合. 视图集合的
+ * 例子包括一些方法返回的包装集合, 如Collections.checkedCollection, 
+ * Collections.synchronizedCollection, Collections.unmodifiableCollection.
+ * 视图集合的其他例子包括一些为相同元素提供了不同表示的集合, 如List.subList,
+ * NavigableSet.subSet 或者 Map.entrySet. 对支持集合的任何改变都在视图集合中可见. 相
+ * 应地, 任何在视图集合上的合法操作都会被写进支持集合当中. 虽然它们(视图集合)在技术上来说
+ * 不是集合, Iterator 和 ListIterator 也可以使修改被写进支持集合中, 某些情况下, 迭代器
+ * 在迭代的过程中可以看到对支持集合的修改.
+ *
  * <h2><a id="unmodifiable">Unmodifiable Collections</a></h2>
+ *
+ * 不可修改集合
  *
  * <p>Certain methods of this interface are considered "destructive" and are called
  * "mutator" methods in that they modify the group of objects contained within
@@ -179,6 +206,15 @@ import java.util.stream.StreamSupport;
  * unconditionally, as throwing only in certain cases can lead to
  * programming errors.
  *
+ * 这个接口中的一些方法被认为是"破坏性的", 我们称之为"mutator"方法, 因为这些方法的操作
+ * 修改了集合包含的对象组. 如果这个集合的实现类没有支持这些操作, 可以指定它们抛出
+ * UnsupportedOperationException异常. 这些方法应该(但不强制)抛出
+ * UnsupportedOperationException异常, 当调用(这些方法)对集合没有任何影响. 举个例子,
+ * 考虑一个不支持add操作的集合. 当调用这个集合的addAll方法并使用一个空集合作为参数的
+ * 时候会发生什么呢? 新增0个元素没有(对集合)造成影响(修改), 因此, 这就允许这个集合简单
+ * 地什么也不做, 也不抛出任何异常. 然而, 建议在这种情况下无条件抛出异常, 只有在某些情况
+ * 下会导致程序错误.
+ *
  * <p>An <i>unmodifiable collection</i> is a collection, all of whose
  * mutator methods (as defined above) are specified to throw
  * {@code UnsupportedOperationException}. Such a collection thus cannot be
@@ -186,6 +222,11 @@ import java.util.stream.StreamSupport;
  * unmodifiable, any view collections derived from it must also be unmodifiable.
  * For example, if a List is unmodifiable, the List returned by
  * {@link List#subList List.subList} is also unmodifiable.
+ *
+ * 不可修改集合是一个指定所有mutator方法(如上述定义)抛出UnsupportedOperationException异常
+ * 的集合. 因此这样的一个集合不能通过调用这些方法来修改, 任何从这个集合衍生的视图集合也必须
+ * 是不可修改的. 举个例子, 如果一个List是不可修改的, 这个List返回的List.subList(子List)也是
+ * 不可修改的.
  *
  * <p>An unmodifiable collection is not necessarily immutable. If the
  * contained elements are mutable, the entire collection is clearly
@@ -196,7 +237,15 @@ import java.util.stream.StreamSupport;
  * However, if an unmodifiable collection contains all immutable elements,
  * it can be considered effectively immutable.
  *
+ * 一个不可修改集合不一定是不可变的. 如果包含的元素是可变的, 那整个集合显然是可变的, 
+ * 即使它可能是不可修改的. 举个例子, 考虑两个包含可变元素的不可修改的list. 调用
+ * list1.equals(list2)的结果可能因为一次调用而和下一次调用(list1.equals(list2))
+ * 的结果不同, 如果元素已经改变了, 即使两个list都是不可修改的. 然而, 如果一个不可修改
+ * 集合包含的元素都是不可变的, 那么它可以被等效看作是不可变的.
+ *
  * <h2><a id="unmodview">Unmodifiable View Collections</a></h2>
+ *
+ * 不可修改视图集合
  *
  * <p>An <i>unmodifiable view collection</i> is a collection that is unmodifiable
  * and that is also a view onto a backing collection. Its mutator methods throw
@@ -211,12 +260,24 @@ import java.util.stream.StreamSupport;
  * {@link Collections#unmodifiableList Collections.unmodifiableList}, and
  * related methods.
  *
+ * 不可修改视图集合是一个不可修改集合, 同时也是支持集合上的一个视图. 它的mutator
+ * 方法会抛出UnsupportedOperationException异常, 如上所述, 读取和查询方法被委托
+ * 给了支持集合. 其效果就是对支持集合提供了只读访问. 这对组件来说非常有用, 可以为
+ * 用户提供对内部集合的读访问权限, 同时防止他们意外修改了这个集合. 不可修改视图集合
+ * 的例子有Collections.unmodifiableCollection, Collections.unmodifiableList和
+ * 相关方法返回的(视图集合).
+ *
  * <p>Note that changes to the backing collection might still be possible,
  * and if they occur, they are visible through the unmodifiable view. Thus,
  * an unmodifiable view collection is not necessarily immutable. However,
  * if the backing collection of an unmodifiable view is effectively immutable,
  * or if the only reference to the backing collection is through an
  * unmodifiable view, the view can be considered effectively immutable.
+ *
+ * 请注意, 对支持集合的修改仍然是可能的, 并且如果发生了, 它们(这些修改)在不可修改视图
+ * 中是可见的. 因此, 不可修改视图集合不一定是不可变的. 然而, 如果不可修改视图的支持
+ * 集合明显是不可变的, 或者如果对支持集合的引用仅通过一个不可修改视图, 那么这个视图就
+ * 可以被等效看作是不可变的.
  *
  * <p>This interface is a member of the
  * <a href="{@docRoot}/java.base/java/util/package-summary.html#CollectionsFramework">
@@ -228,7 +289,10 @@ import java.util.stream.StreamSupport;
  * specific synchronization protocol, then it must override default
  * implementations to apply that protocol.
  *
- * @param <E> the type of elements in this collection
+ * 默认方法的实现(继承或其他方式)不应使用任何同步协议. 如果Collection实现了特定的同步协议,
+ * 那么它必须重写默认的实现来使用这个协议.
+ *
+ * @param <E> the type of elements in this collection 集合中元素的类型
  *
  * @author  Josh Bloch
  * @author  Neal Gafter
@@ -252,21 +316,26 @@ import java.util.stream.StreamSupport;
  */
 
 public interface Collection<E> extends Iterable<E> {
-    // Query Operations
+    // Query Operations 查询操作
 
     /**
      * Returns the number of elements in this collection.  If this collection
      * contains more than {@code Integer.MAX_VALUE} elements, returns
      * {@code Integer.MAX_VALUE}.
      *
-     * @return the number of elements in this collection
+     * 返回集合中元素的数量. 如果集合包含大于Integer.MAX_VALUE数量的元素, 就返回
+     * Integer.MAX_VALUE.
+     *
+     * @return the number of elements in this collection 集合中元素的数量
      */
     int size();
 
     /**
      * Returns {@code true} if this collection contains no elements.
      *
-     * @return {@code true} if this collection contains no elements
+     * 如果集合中没有包含任何元素, 就返回true
+     *
+     * @return {@code true} if this collection contains no elements 如果集合中没有包含任何元素, 就返回true
      */
     boolean isEmpty();
 
@@ -276,14 +345,17 @@ public interface Collection<E> extends Iterable<E> {
      * contains at least one element {@code e} such that
      * {@code Objects.equals(o, e)}.
      *
-     * @param o element whose presence in this collection is to be tested
+     * 如果集合中没有包含指定的元素, 就返回true. 准确来说, 当且仅当集合中包含至少一个
+     * 元素e, 使得Objects.equals(o, e), 就返回true.
+     *
+     * @param o element whose presence in this collection is to be tested 将要被检查是否存在于当前集合的元素
      * @return {@code true} if this collection contains the specified
-     *         element
+     *         element 如果集合中没有包含指定的元素, 就返回true
      * @throws ClassCastException if the type of the specified element
-     *         is incompatible with this collection
+     *         is incompatible with this collection 如果指定元素的类型和当前集合的类型不相容
      *         (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if the specified element is null and this
-     *         collection does not permit null elements
+     *         collection does not permit null elements 如果指定元素是null并且当前集合不允许有null元素
      *         (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      */
     boolean contains(Object o);
