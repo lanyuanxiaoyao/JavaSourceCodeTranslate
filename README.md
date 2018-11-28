@@ -5,9 +5,12 @@ Java源码阅读计划
 
 *update by lanyuanxiaoyao at 2018.11.13*
 
+# 版本
+源码版本: [JDK 11.0.1 General-Availability Release](https://jdk.java.net/11/)
+
 # 进度
 - concurrent
-  - BlockingQueue (Translating...)
+  - BlockingQueue (Translating... by enterprising)
 - ArrayList (Finished by lanyuanxiaoyao)
 - Collection (Translating... by lanyuanxiaoyao)
 
