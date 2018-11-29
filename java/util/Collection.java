@@ -456,27 +456,39 @@ public interface Collection<E> extends Iterable<E> {
      * The following code can be used to dump the collection into a previously
      * allocated {@code String} array:
      *
+     * 假设x是一个已知的数组包含的唯一的字符串. 下面的代码常被用于将集合(中的元素)装进
+     * 一个已经创建好的字符串数组里.
+     *
      * <pre>
      *     String[] y = new String[SIZE];
      *     ...
      *     y = x.toArray(y);</pre>
      *
      * <p>The return value is reassigned to the variable {@code y}, because a
-     * new array will be allocated and returned if the collection {@code x} has
+     * new array will be allocated and returned ifg the collection {@code x} has
      * too many elements to fit into the existing array {@code y}.
+     *
+     * 返回值被重新分配给变量y, 因为如果集合x包含了太多元素以至于无法放进已有数组y, 
+     * 那么将会重新申请一个新的数组来返回.
      *
      * <p>Note that {@code toArray(new Object[0])} is identical in function to
      * {@code toArray()}.
      *
-     * @param <T> the component type of the array to contain the collection
+     * 请注意toArray(new Object[0])与方法toArray()是完全相同的.
+     *
+     * @param <T> the component type of the array to contain the collection 包含集合的数组元素的类型
      * @param a the array into which the elements of this collection are to be
      *        stored, if it is big enough; otherwise, a new array of the same
-     *        runtime type is allocated for this purpose.
-     * @return an array containing all of the elements in this collection
+     *        runtime type is allocated for this purpose. 
+     *
+     *        如果数组足够大, 可以放下整个list的元素, 则用这个数组存储list的元素.
+     *        否则, 就申请一个新的, 类型与a数组类型相同的数组, 来存储list的元素.
+     *
+     * @return an array containing all of the elements in this collection 一个包含list所有元素的数组
      * @throws ArrayStoreException if the runtime type of any element in this
      *         collection is not assignable to the {@linkplain Class#getComponentType
-     *         runtime component type} of the specified array
-     * @throws NullPointerException if the specified array is null
+     *         runtime component type} of the specified array 如果(参数)指定的数组的类型不是list里所有元素的父类型
+     * @throws NullPointerException if the specified array is null 如果(参数)指定的数组为null
      */
     <T> T[] toArray(T[] a);
 

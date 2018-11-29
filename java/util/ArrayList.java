@@ -565,16 +565,10 @@ public class ArrayList<E> extends AbstractList<E>
      *          如果数组足够大, 可以放下整个list的元素, 则用这个数组存储list的元素.
      *          否则, 就申请一个新的, 类型与a数组类型相同的数组, 来存储list的元素.
      *
-     * @return an array containing the elements of the list
-     *
-     *          一个包含list所有元素的数组
-     *
+     * @return an array containing the elements of the list 一个包含list所有元素的数组
      * @throws ArrayStoreException if the runtime type of the specified array
      *         is not a supertype of the runtime type of every element in
-     *         this list
-     *
-     *          如果(参数)指定的数组的类型不是list里所有元素的父类型
-     *
+     *         this list 如果(参数)指定的数组的类型不是list里所有元素的父类型
      * @throws NullPointerException if the specified array is null 如果(参数)指定的数组为null
      *
      * (这个方法是为了得到一个指定类型的, 存储所有list元素的数组, 参数是一个数组,
