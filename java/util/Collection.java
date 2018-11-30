@@ -484,7 +484,7 @@ public interface Collection<E> extends Iterable<E> {
      *        如果数组足够大, 可以放下整个list的元素, 则用这个数组存储list的元素.
      *        否则, 就申请一个新的, 类型与a数组类型相同的数组, 来存储list的元素.
      *
-     * @return an array containing all of the elements in this collection 一个包含list所有元素的数组
+     * @return an array containing all of the elements in this collection 一个包含集合所有元素的数组
      * @throws ArrayStoreException if the runtime type of any element in this
      *         collection is not assignable to the {@linkplain Class#getComponentType
      *         runtime component type} of the specified array 如果(参数)指定的数组的类型不是list里所有元素的父类型
@@ -496,9 +496,14 @@ public interface Collection<E> extends Iterable<E> {
      * Returns an array containing all of the elements in this collection,
      * using the provided {@code generator} function to allocate the returned array.
      *
+     * 使用提供的generator方法申请返回的数组来返回一个包含当前集合所有元素的数组.
+     *
      * <p>If this collection makes any guarantees as to what order its elements
      * are returned by its iterator, this method must return the elements in
      * the same order.
+     *
+     * 如果当前集合通过迭代器对它包含的元素的顺序作出了任何保证, 这个方法返回的元素也必
+     * 须是按(和迭代器)相同的顺序.
      *
      * @apiNote
      * This method acts as a bridge between array-based and collection-based APIs.
@@ -506,9 +511,16 @@ public interface Collection<E> extends Iterable<E> {
      * {@link #toArray()} to create an array whose runtime type is {@code Object[]},
      * or use {@link #toArray(Object[]) toArray(T[])} to reuse an existing array.
      *
+     * 这个方法是扮演着数组和集合之间的桥梁的API. (这个方法)允许创建一个特定的运行时类型的
+     * 数组. 使用toArray()创建一个运行时类型为Object[]的数组, 或者使用toArray(T[])来复用
+     * 一个已经存在的数组.
+     *
      * <p>Suppose {@code x} is a collection known to contain only strings.
      * The following code can be used to dump the collection into a newly
      * allocated array of {@code String}:
+     *
+     * 假设x是一个已知的数组包含的唯一的字符串. 下面的代码常被用于将集合(中的元素)装进
+     * 一个已经新建的(元素类型)为字符串的数组里.
      *
      * <pre>
      *     String[] y = x.toArray(String[]::new);</pre>
@@ -517,27 +529,37 @@ public interface Collection<E> extends Iterable<E> {
      * The default implementation calls the generator function with zero
      * and then passes the resulting array to {@link #toArray(Object[]) toArray(T[])}.
      *
-     * @param <T> the component type of the array to contain the collection
+     * 默认实现调用构造器(使用的参数)是0, 并且使用toArray(T[])作为结果数组.
+     *
+     * (实际上是一个提供给lambda表达式使用的扩展方法)
+     *
+     * @param <T> the component type of the array to contain the collection 包含集合的数组元素的类型
      * @param generator a function which produces a new array of the desired
-     *                  type and the provided length
-     * @return an array containing all of the elements in this collection
+     *                  type and the provided length 一个根据需要的类型构建一个新数组, 并提供其长度的方法
+     * @return an array containing all of the elements in this collection 一个包含集合所有元素的数组
      * @throws ArrayStoreException if the runtime type of any element in this
      *         collection is not assignable to the {@linkplain Class#getComponentType
      *         runtime component type} of the generated array
-     * @throws NullPointerException if the generator function is null
+     *
+     *         如果集合中的任何一个元素的运行时状态不能被转换为getComponentType方法获得的运行时类型
+     *
+     * @throws NullPointerException if the generator function is null 如果构造方法是null
      * @since 11
      */
     default <T> T[] toArray(IntFunction<T[]> generator) {
         return toArray(generator.apply(0));
     }
 
-    // Modification Operations
+    // Modification Operations 修改操作
 
     /**
      * Ensures that this collection contains the specified element (optional
      * operation).  Returns {@code true} if this collection changed as a
      * result of the call.  (Returns {@code false} if this collection does
      * not permit duplicates and already contains the specified element.)<p>
+     *
+     * 确保集合包含指定的元素(可选操作). 如果集合被(这个方法)的调用改变了, 就返回
+     * true. 如果这个集合不允许重复元素并且已经包含了指定元素, 就返回false.
      *
      * Collections that support this operation may place limitations on what
      * elements may be added to this collection.  In particular, some
@@ -546,25 +568,33 @@ public interface Collection<E> extends Iterable<E> {
      * Collection classes should clearly specify in their documentation any
      * restrictions on what elements may be added.<p>
      *
+     * 支持这个操作的集合可能会对添加什么元素到这个集合里进行限制. 特别的, 一些集合
+     * 会拒绝添加null元素, 并且另一些集合会限制可能被添加到集合里的元素的类型. 
+     * 集合类应该在文档里清晰地指明可能被添加到集合里的元素的限制.
+     *
      * If a collection refuses to add a particular element for any reason
      * other than that it already contains the element, it <i>must</i> throw
      * an exception (rather than returning {@code false}).  This preserves
      * the invariant that a collection always contains the specified element
      * after this call returns.
      *
-     * @param e element whose presence in this collection is to be ensured
+     * 如果集合因为任何原因拒绝添加一个特别的元素, 除了该集合已经包含该元素, 它都必须
+     * 抛出一个异常(而不是返回false). 这样可以维护一个集合在(add)方法调用后总是会包含
+     * 这个特别的元素(的结果).
+     *
+     * @param e element whose presence in this collection is to be ensured 要确保在该集合中存在的元素
      * @return {@code true} if this collection changed as a result of the
-     *         call
+     *         call 如果集合被该方法的调用改变了, 就返回true
      * @throws UnsupportedOperationException if the {@code add} operation
-     *         is not supported by this collection
+     *         is not supported by this collection 如果这个集合不支持add操作
      * @throws ClassCastException if the class of the specified element
-     *         prevents it from being added to this collection
+     *         prevents it from being added to this collection 如果指定元素由于类型在被添加到这个集合的时候被拒绝
      * @throws NullPointerException if the specified element is null and this
-     *         collection does not permit null elements
+     *         collection does not permit null elements 如果指定的元素是null并且这个集合不允许存在null元素
      * @throws IllegalArgumentException if some property of the element
-     *         prevents it from being added to this collection
+     *         prevents it from being added to this collection 如果元素的某些属性(导致)被拒绝添加进这个集合
      * @throws IllegalStateException if the element cannot be added at this
-     *         time due to insertion restrictions
+     *         time due to insertion restrictions 如果由于插入限制导致元素不能在这个时候被添加
      */
     boolean add(E e);
 
@@ -577,38 +607,44 @@ public interface Collection<E> extends Iterable<E> {
      * {@code true} if this collection contained the specified element (or
      * equivalently, if this collection changed as a result of the call).
      *
-     * @param o element to be removed from this collection, if present
-     * @return {@code true} if an element was removed as a result of this call
+     * 从这个集合中移除一个指定的元素, 如果存在的话(可选操作). 更准确来说, 移除一个
+     * 元素e, 满足Objects.equals(o, e), 如果这个集合包含一个或多个该元素. 如果
+     * 这个集合包含指定的元素(即当这个集合被这个方法的调用改变了), 就返回true.
+     *
+     * @param o element to be removed from this collection, if present 将被从这个集合中移除的元素, 如果存在
+     * @return {@code true} if an element was removed as a result of this call 如果一个元素因为这个方法的调用从集合里被移除了
      * @throws ClassCastException if the type of the specified element
-     *         is incompatible with this collection
+     *         is incompatible with this collection 如果指定元素的类型与这个集合不相符
      *         (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if the specified element is null and this
-     *         collection does not permit null elements
+     *         collection does not permit null elements 如果指定的元素是null并且这个集合不允许存在null元素
      *         (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      * @throws UnsupportedOperationException if the {@code remove} operation
-     *         is not supported by this collection
+     *         is not supported by this collection 如果这个集合不支持remove操作
      */
     boolean remove(Object o);
 
 
-    // Bulk Operations
+    // Bulk Operations 批量操作
 
     /**
      * Returns {@code true} if this collection contains all of the elements
      * in the specified collection.
      *
-     * @param  c collection to be checked for containment in this collection
+     * 如果这个集合包含指定集合里的所有元素, 就返回true
+     *
+     * @param  c collection to be checked for containment in this collection 需要被检查在这个集合中的包含状况的集合
      * @return {@code true} if this collection contains all of the elements
-     *         in the specified collection
+     *         in the specified collection 如果这个集合包含指定集合里的所有元素, 就返回true
      * @throws ClassCastException if the types of one or more elements
      *         in the specified collection are incompatible with this
-     *         collection
+     *         collection 如果指定集合有一个或多个元素的类型与这个集合不相符
      *         (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if the specified collection contains one
      *         or more null elements and this collection does not permit null
      *         elements
      *         (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>),
-     *         or if the specified collection is null.
+     *         or if the specified collection is null. 如果指定集合存在一个或多个元素是null并且这个集合不允许存在null元素或指定的集合是null
      * @see    #contains(Object)
      */
     boolean containsAll(Collection<?> c);

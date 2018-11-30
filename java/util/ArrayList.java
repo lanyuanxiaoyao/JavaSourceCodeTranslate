@@ -843,7 +843,9 @@ public class ArrayList<E> extends AbstractList<E>
      * changed as a result of the call).
      *
      * 移除list中第一次出现(与指定元素相同)的元素, 如果其存在的话. 如果list中没有包含
-     * 该元素的话, 那么list不会被修改. 准确地来说, 是移除最小索引的元素.
+     * 该元素的话, 那么list不会被修改. 准确地来说, 是移除最小索引i, 使得其满足
+     * Objects.equals(o, get(i))(如果这个元素存在). 如果这个集合包含指定的元素
+     * (即当这个集合被这个方法的调用改变了), 就返回true.
      *
      * @param o element to be removed from this list, if present 从list中被移除的元素, 如果存在的话
      * @return {@code true} if this list contained the specified element 如果list包含指定的元素, 返回true
