@@ -1,26 +1,6 @@
 /*
  * Copyright (c) 1997, 2018, Oracle and/or its affiliates. All rights reserved.
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * This code is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Oracle designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Oracle in the LICENSE file that accompanied this code.
- *
- * This code is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * version 2 for more details (a copy is included in the LICENSE file that
- * accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version
- * 2 along with this work; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
- * or visit www.oracle.com if you need additional information or have any
- * questions.
+ * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 
 package java.util;
@@ -29,10 +9,15 @@ package java.util;
  * This class provides a skeletal implementation of the {@code Collection}
  * interface, to minimize the effort required to implement this interface. <p>
  *
+ * 这个类提供了Collection接口的实现骨架，目的是为了尽可能地实现这个接口需要的时间。
+ *
  * To implement an unmodifiable collection, the programmer needs only to
  * extend this class and provide implementations for the {@code iterator} and
  * {@code size} methods.  (The iterator returned by the {@code iterator}
  * method must implement {@code hasNext} and {@code next}.)<p>
+ *
+ * 为了实现一个不可修改的集合，程序只需要拓展这个类并提供iterator和size的实现方法。
+ * （通过iterator方法返回的迭代器必须实现hasNext和next。）
  *
  * To implement a modifiable collection, the programmer must additionally
  * override this class's {@code add} method (which otherwise throws an
@@ -40,17 +25,29 @@ package java.util;
  * {@code iterator} method must additionally implement its {@code remove}
  * method.<p>
  *
+ * 为了实现一个可编辑的集合，程序员必须额外地覆盖此类的add方法（除此之外这个方法
+ * 还会抛出一个UnsupportedOperationException的异常），并且通过iterator方法返回
+ * 的迭代器必须额外地实现它的remove方法。
+ *
  * The programmer should generally provide a void (no argument) and
  * {@code Collection} constructor, as per the recommendation in the
  * {@code Collection} interface specification.<p>
+ *
+ * 程序员通常应该提供一个空的（没有参数）和集合的构造器，作为每一个集合接口规范的
+ * 建议。
  *
  * The documentation for each non-abstract method in this class describes its
  * implementation in detail.  Each of these methods may be overridden if
  * the collection being implemented admits a more efficient implementation.<p>
  *
+ * 这个类中每一个非抽象方法的文档描述了它的具体实现。在集合需要另一种实现的情况下，
+ * 这些个方法都能被覆写。
+ *
  * This class is a member of the
  * <a href="{@docRoot}/java.base/java/util/package-summary.html#CollectionsFramework">
  * Java Collections Framework</a>.
+ *
+ * 这个类是Java集合框架中的一个成员。
  *
  * @author  Josh Bloch
  * @author  Neal Gafter
@@ -62,14 +59,19 @@ public abstract class AbstractCollection<E> implements Collection<E> {
     /**
      * Sole constructor.  (For invocation by subclass constructors, typically
      * implicit.)
+	 *
+	 * 唯一的构造方法。（对于子类构造方法的调用，一般是隐式的。）
+	 *
      */
     protected AbstractCollection() {
     }
 
     // Query Operations
+	// 查询操作
 
     /**
      * Returns an iterator over the elements contained in this collection.
+	 * 返回一个覆盖该集合所有元素的iterator构造器。
      *
      * @return an iterator over the elements contained in this collection
      */
@@ -82,6 +84,8 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      *
      * @implSpec
      * This implementation returns {@code size() == 0}.
+	 * 这个实现返回size为0。
+	 *
      */
     public boolean isEmpty() {
         return size() == 0;
@@ -93,6 +97,10 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @implSpec
      * This implementation iterates over the elements in the collection,
      * checking each element in turn for equality with the specified element.
+	 * 这个实现对该集合中的所有元素进行迭代，每次检查一个元素判断是否与具体元素相等。
+     * 该方法用于判断集合中是否包含某一元素。当某一元素为null（NPE警告）时为了避免
+     * equals方法报空指针，单独判断集合中是否包含null值。当元素不为空的时候，遍历集
+     * 合找出与元素相等的元素（通过equals方法）。
      *
      * @throws ClassCastException   {@inheritDoc}
      * @throws NullPointerException {@inheritDoc}
@@ -124,6 +132,16 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * concurrent modification during iteration.  The {@code size} method is
      * called only as an optimization hint; the correct result is returned
      * even if the iterator returns a different number of elements.
+	 *
+	 * 这个实现通过集合的迭代器返回了一个包含所有元素的数组，以相同的顺序，存储在连续
+	 * 的集合元素中，从0开始。返回数组的长度等于集合迭代器返回的元素的个数，就算在迭代
+	 * 中长度进行了改变还是一样，这种情况可能发生在集合允许在迭代过程中进行修改。
+	 * 这个size方法只会在优化提示的时候进行调用（这句话怎么翻译？），就算迭代器返回了
+	 * 一个不同的元素数量也会返回正确的结果。
+     * 该方法用于将集合转化成一个数组，数组的长度等于集合的size()方法返回值。首先定义一个
+     * 以集合大小（size()方法返回的长度，这里为了区分叫做大小）为长度的Object数组。遍历数
+     * 组，每次循环中将集合中的元素对数组中的元素进行赋值，一直到集合中没有元素的时候，这
+     * 个时候会将现有数组复制成一个新的数据返回。（这里主要是为了防止集合在转换过程中变化）
      *
      * <p>This method is equivalent to:
      *
@@ -161,6 +179,20 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * concurrent modification during iteration.  The {@code size} method is
      * called only as an optimization hint; the correct result is returned
      * even if the iterator returns a different number of elements.
+     *
+     * 这个实现方法由迭代器以相同的顺序返回一个包含所有元素的数组，存储在连续的数组元素
+     * 中，从下标0开始（大概意思就是说把一个集合转化成一个固定的数组，这个数组通过参数传入）。
+     * 如果这个集合中的元素太多了在这个数组中放不下的话，那么会返回一个新分配的等同于集合长度
+     * 的数组。就算集合的长度在改变也是一样的，这种情况一般发生在允许遍历中编辑的集合中。
+     *
+     * 首先获取集合的大小（size()方法），判断传入的参数数组的长度和原集合的大小，如果数组
+     * 的长度大则使用数组的长度，否则使用和集合大小一样的一个新的数组。然后开始遍历集合，将
+     * 集合的元素赋值给数组。这时候有三种情况：第一种情况参数数组的长度和集合的大小相同，则
+     * 遍历数组结束的时候集合也遍历完成，这时候直接返回数组即可；第二种情况数组的长度大于集合
+     * 的大小，这时候又要分三种情况，如果当前数组等价于参数数组的时候，往数组中填入null值，如
+     * 果参数数组的长度小于当前数组的时候，将当前数组赋值成一个新的返回，其他情况下先将当前数
+     * 组复制给参数数组，再在后面的值中插入null；第三种情况下如果数组遍历完了集合中还有元素，
+     * 这个时候就将集合遍历全部复制给数组再返回。
      *
      * <p>This method is equivalent to:
      *
