@@ -657,20 +657,24 @@ public interface Collection<E> extends Iterable<E> {
      * specified collection is this collection, and this collection is
      * nonempty.)
      *
-     * @param c collection containing elements to be added to this collection
-     * @return {@code true} if this collection changed as a result of the call
+     * 添加指定集合里的所有元素到当前集合中(可选操作). 这个方法没有定义的一个操作是在方
+     * 法执行的过程中, 如果指定的Collection集合被修改了. (这意味着, 如果指定的Collection
+     * 集合就是该集合并且集合非空, 那么这种调用的行为是没有定义的.)
+     *
+     * @param c collection containing elements to be added to this collection 将要被添加进当前集合中的元素的Collection集合
+     * @return {@code true} if this collection changed as a result of the call 如果集合被该方法的调用改变了, 就返回true
      * @throws UnsupportedOperationException if the {@code addAll} operation
-     *         is not supported by this collection
+     *         is not supported by this collection 如果这个集合不支持addAll操作
      * @throws ClassCastException if the class of an element of the specified
-     *         collection prevents it from being added to this collection
+     *         collection prevents it from being added to this collection 如果指定集合中的一个元素的类型被当前集合拒绝添加
      * @throws NullPointerException if the specified collection contains a
      *         null element and this collection does not permit null elements,
-     *         or if the specified collection is null
+     *         or if the specified collection is null 如果指定集合包含一个元素是null并且这个集合不允许存在null元素或指定的集合是null
      * @throws IllegalArgumentException if some property of an element of the
      *         specified collection prevents it from being added to this
-     *         collection
+     *         collection 如果元素的某些属性(导致)被拒绝添加进这个集合
      * @throws IllegalStateException if not all the elements can be added at
-     *         this time due to insertion restrictions
+     *         this time due to insertion restrictions 如果由于插入限制导致不是全部元素能在这个时候被添加
      * @see #add(Object)
      */
     boolean addAll(Collection<? extends E> c);
