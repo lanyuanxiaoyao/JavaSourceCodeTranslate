@@ -685,20 +685,23 @@ public interface Collection<E> extends Iterable<E> {
      * this collection will contain no elements in common with the specified
      * collection.
      *
-     * @param c collection containing elements to be removed from this collection
+     * 移除这个集合中所有包含在指定集合中的元素(可选操作). 在这个方法被调用之后, 这个集合
+     * 将不再包含有与制定集合公有的元素.
+     *
+     * @param c collection containing elements to be removed from this collection 将要被从当前集合中移除的元素的Collection集合
      * @return {@code true} if this collection changed as a result of the
-     *         call
+     *         call 如果集合被该方法的调用改变了, 就返回true
      * @throws UnsupportedOperationException if the {@code removeAll} method
-     *         is not supported by this collection
+     *         is not supported by this collection 如果这个集合不支持removeAll操作
      * @throws ClassCastException if the types of one or more elements
      *         in this collection are incompatible with the specified
-     *         collection
+     *         collection 如果指定集合有一个或多个元素的类型与这个集合不相符
      *         (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if this collection contains one or more
      *         null elements and the specified collection does not support
      *         null elements
      *         (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>),
-     *         or if the specified collection is null
+     *         or if the specified collection is null 如果指定集合包含一个元素是null并且这个集合不允许存在null元素或指定的集合是null
      * @see #remove(Object)
      * @see #contains(Object)
      */
