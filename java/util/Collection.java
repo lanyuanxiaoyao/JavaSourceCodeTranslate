@@ -712,6 +712,9 @@ public interface Collection<E> extends Iterable<E> {
      * predicate.  Errors or runtime exceptions thrown during iteration or by
      * the predicate are relayed to the caller.
      *
+     * 移除当前集合中满足给定的表达式的元素. 在迭代过程中表达式中发生的错误和抛出的运
+     * 行时异常将被发送被调用者. 
+     *
      * @implSpec
      * The default implementation traverses all elements of the collection using
      * its {@link #iterator}.  Each matching element is removed using
@@ -719,18 +722,23 @@ public interface Collection<E> extends Iterable<E> {
      * support removal then an {@code UnsupportedOperationException} will be
      * thrown on the first matching element.
      *
+     * 默认实现使用迭代器来遍历集合中的所有元素. 每个匹配的元素将使用remove()方法移除.
+     * 如果集合的迭代器不支持移除(操作), 那么在第一个匹配的元素的地方将抛出一个
+     * UnsupportedOperationException异常.
+     *
      * @param filter a predicate which returns {@code true} for elements to be
-     *        removed
-     * @return {@code true} if any elements were removed
-     * @throws NullPointerException if the specified filter is null
+     *        removed 一个(如果匹配)要移除的元素就返回true的表达式
+     * @return {@code true} if any elements were removed 如果有任何一个元素被移除
+     * @throws NullPointerException if the specified filter is null 如果指定的过滤器(表达式)是null
      * @throws UnsupportedOperationException if elements cannot be removed
      *         from this collection.  Implementations may throw this exception if a
      *         matching element cannot be removed or if, in general, removal is not
-     *         supported.
+     *         supported. 如果元素不能从集合中移除. 实现类应当在一个元素不能被移除或者说移除操作不支持的时候抛出这个异常.
      * @since 1.8
      */
     default boolean removeIf(Predicate<? super E> filter) {
         Objects.requireNonNull(filter);
+        // 使用标志位来表示迭代有没有成功
         boolean removed = false;
         final Iterator<E> each = iterator();
         while (each.hasNext()) {
