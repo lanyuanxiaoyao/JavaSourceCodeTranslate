@@ -701,7 +701,7 @@ public interface Collection<E> extends Iterable<E> {
      *         null elements and the specified collection does not support
      *         null elements
      *         (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>),
-     *         or if the specified collection is null 如果指定集合包含一个元素是null并且这个集合不允许存在null元素或指定的集合是null
+     *         or if the specified collection is null 如果指定集合包含一个或多个元素是null并且这个集合不允许存在null元素或指定的集合是null
      * @see #remove(Object)
      * @see #contains(Object)
      */
@@ -756,17 +756,20 @@ public interface Collection<E> extends Iterable<E> {
      * this collection all of its elements that are not contained in the
      * specified collection.
      *
-     * @param c collection containing elements to be retained in this collection
-     * @return {@code true} if this collection changed as a result of the call
+     * 只保留仅在当前集合中并同时被包含在指定集合中的元素(可选操作). 换句话说, 移除当
+     * 前集合中所有没有被包含在指定集合中的元素.
+     *
+     * @param c collection containing elements to be retained in this collection 包含要在当前集合中被保留的元素的集合
+     * @return {@code true} if this collection changed as a result of the call 如果集合被该方法的调用改变了, 就返回true
      * @throws UnsupportedOperationException if the {@code retainAll} operation
-     *         is not supported by this collection
+     *         is not supported by this collection 如果这个集合不支持retainAll操作
      * @throws ClassCastException if the types of one or more elements
      *         in this collection are incompatible with the specified
-     *         collection
+     *         collection 如果指定集合有一个或多个元素的类型与这个集合不相符
      *         (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if this collection contains one or more
      *         null elements and the specified collection does not permit null
-     *         elements
+     *         elements 如果指定集合包含一个或多个元素是null并且这个集合不允许存在null元素或指定的集合是null
      *         (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>),
      *         or if the specified collection is null
      * @see #remove(Object)
@@ -778,8 +781,10 @@ public interface Collection<E> extends Iterable<E> {
      * Removes all of the elements from this collection (optional operation).
      * The collection will be empty after this method returns.
      *
+     * 从当前集合中移除全部元素(可选操作). 在这个方法返回之后, 集合将会空空如也.
+     *
      * @throws UnsupportedOperationException if the {@code clear} operation
-     *         is not supported by this collection
+     *         is not supported by this collection 如果这个集合不支持clear操作
      */
     void clear();
 
@@ -841,10 +846,15 @@ public interface Collection<E> extends Iterable<E> {
     /**
      * Creates a {@link Spliterator} over the elements in this collection.
      *
+     * 创建一个(作用在)当前集合所有元素上的Spliterator(分割器).
+     *
      * Implementations should document characteristic values reported by the
      * spliterator.  Such characteristic values are not required to be reported
      * if the spliterator reports {@link Spliterator#SIZED} and this collection
      * contains no elements.
+     *
+     * 实现类应该记录由spliterator报告的特征值. 如果spliterator报告SIZED值并且集合不
+     * 包含任何元素, 则不需要报告此类特征值.
      *
      * <p>The default implementation should be overridden by subclasses that
      * can return a more efficient spliterator.  In order to
@@ -857,13 +867,23 @@ public interface Collection<E> extends Iterable<E> {
      * and should override the {@link #stream()} and {@link #parallelStream()}
      * methods to create streams using a {@code Supplier} of the spliterator,
      * as in:
+     *
+     * 默认实现应该被子类重写, 这些子类可以返回更有效率的spliterator. 为了保持对stream()
+     * 和parallelStream()方法预期的延迟(加载)的行为, spliterator应该同时拥有不可变, 可并发, 
+     * 和延迟加载这几个特征. 如果这些都不采用, 那么继承的类应该描述spliterator记录的约束和
+     * 结构化(修改)干扰的策略
+     *
      * <pre>{@code
      *     Stream<E> s = StreamSupport.stream(() -> spliterator(), spliteratorCharacteristics)
      * }</pre>
+     *
      * <p>These requirements ensure that streams produced by the
      * {@link #stream()} and {@link #parallelStream()} methods will reflect the
      * contents of the collection as of initiation of the terminal stream
      * operation.
+     *
+     * 这些要求确保stream()和parallelStream()方法提供的流将会在终端启动流操作
+     * 的时候(准确)反映集合的内容.
      *
      * @implSpec
      * The default implementation creates a
@@ -896,16 +916,23 @@ public interface Collection<E> extends Iterable<E> {
     /**
      * Returns a sequential {@code Stream} with this collection as its source.
      *
+     * 返回一个以当前集合作为数据源的顺序流.
+     *
      * <p>This method should be overridden when the {@link #spliterator()}
      * method cannot return a spliterator that is {@code IMMUTABLE},
      * {@code CONCURRENT}, or <em>late-binding</em>. (See {@link #spliterator()}
      * for details.)
      *
+     * 当spliterator()方法因为不可变, 并发或延迟加载而不能返回spliterator的时候, 这个
+     * 方法应该要被重写.
+     *
      * @implSpec
      * The default implementation creates a sequential {@code Stream} from the
      * collection's {@code Spliterator}.
      *
-     * @return a sequential {@code Stream} over the elements in this collection
+     * 默认实现从集合的Spliterator创建一个顺序流.
+     *
+     * @return a sequential {@code Stream} over the elements in this collection 一个当前集合所有元素的顺序流
      * @since 1.8
      */
     default Stream<E> stream() {
@@ -916,17 +943,24 @@ public interface Collection<E> extends Iterable<E> {
      * Returns a possibly parallel {@code Stream} with this collection as its
      * source.  It is allowable for this method to return a sequential stream.
      *
+     * 返回一个以当前集合作为数据源的可能是并发的流. 这个方法允许返回一个顺序流.
+     *
      * <p>This method should be overridden when the {@link #spliterator()}
      * method cannot return a spliterator that is {@code IMMUTABLE},
      * {@code CONCURRENT}, or <em>late-binding</em>. (See {@link #spliterator()}
      * for details.)
      *
+     * 当spliterator()方法因为不可变, 并发或延迟加载而不能返回spliterator的时候, 这个
+     * 方法应该要被重写.
+     *
      * @implSpec
      * The default implementation creates a parallel {@code Stream} from the
      * collection's {@code Spliterator}.
      *
+     * 默认实现从集合的Spliterator创建一个并发流.
+     *
      * @return a possibly parallel {@code Stream} over the elements in this
-     * collection
+     * collection 一个当前集合所有元素的可能并发的流
      * @since 1.8
      */
     default Stream<E> parallelStream() {
