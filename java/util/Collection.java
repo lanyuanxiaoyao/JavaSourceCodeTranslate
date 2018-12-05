@@ -871,7 +871,8 @@ public interface Collection<E> extends Iterable<E> {
      * 默认实现应该被子类重写, 这些子类可以返回更有效率的spliterator. 为了保持对stream()
      * 和parallelStream()方法预期的延迟(加载)的行为, spliterator应该同时拥有不可变, 可并发, 
      * 和延迟加载这几个特征. 如果这些都不采用, 那么继承的类应该描述spliterator记录的约束和
-     * 结构化(修改)干扰的策略
+     * 结构化(修改)干扰的策略, 并且应该重写stream()和parallelStream()方法, 使用spliterator
+     * 的Supplier来创建流, 如下所示:
      *
      * <pre>{@code
      *     Stream<E> s = StreamSupport.stream(() -> spliterator(), spliteratorCharacteristics)
