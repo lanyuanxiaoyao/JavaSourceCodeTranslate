@@ -58,6 +58,9 @@ import jdk.internal.misc.SharedSecrets;
  * operations ({@code add}, {@code set}, and so on) are implemented by
  * making a fresh copy of the underlying array.
  *
+ * 一个在所有修改方法(如add, set等)中通过构建一个底层数组的新副本来实现线程安全的
+ * ArrayList.
+ *
  * <p>This is ordinarily too costly, but may be <em>more</em> efficient
  * than alternatives when traversal operations vastly outnumber
  * mutations, and is useful when you cannot or don't want to
@@ -73,7 +76,15 @@ import jdk.internal.misc.SharedSecrets;
  * {@code add}) are not supported. These methods throw
  * {@code UnsupportedOperationException}.
  *
- * <p>All elements are permitted, including {@code null}.
+ * 这(种操作)通常成本较高, 但当遍历操作远多于修改操作的时候, 它可能比XX更高效, 
+ * 并且当你不能或不想进行同步遍历, 但需要排除并发线程间的干扰时非常有用. "快照"
+ * 风格的迭代器方法在创建迭代器的时候使用对数组状态的引用. 这个数组在迭代器的
+ * 生命周期内不会被改变, 所以干扰(数组的状态)是不可能的, 并且保证迭代器不会抛出
+ * ConcurrentModificationException异常. 这个迭代器从被创建开始, 就不会反映list
+ * 的增加, 移除或者修改. 不支持对迭代器本身进行元素修改操作(remove, set和add).
+ * 这些方法会抛出UnsupportedOperationException异常.
+ *
+ * <p>All elements are permitted, including {@code null}. 所有元素都允许(被添加), 包括null
  *
  * <p>Memory consistency effects: As with other concurrent
  * collections, actions in a thread prior to placing an object into a
@@ -82,13 +93,21 @@ import jdk.internal.misc.SharedSecrets;
  * actions subsequent to the access or removal of that element from
  * the {@code CopyOnWriteArrayList} in another thread.
  *
+ * 内存一致性的效果: 与其他并发集合一样, 上一个进程添加对象到CopyOnWriteArrayList的操作会
+ * 在后一个进程访问或从CopyOnWriteArrayList中移除元素之前发生
+ *
  * <p>This class is a member of the
  * <a href="{@docRoot}/java.base/java/util/package-summary.html#CollectionsFramework">
  * Java Collections Framework</a>.
  *
+ * 这个类是Java集合框架中的一员
+ *
  * @since 1.5
  * @author Doug Lea
  * @param <E> the type of elements held in this list
+ *
+ * @translator LanyuanXiaoyao
+ * @date 2018.10.25
  */
 public class CopyOnWriteArrayList<E>
     implements List<E>, RandomAccess, Cloneable, java.io.Serializable {
@@ -97,6 +116,8 @@ public class CopyOnWriteArrayList<E>
     /**
      * The lock protecting all mutators.  (We have a mild preference
      * for builtin monitors over ReentrantLock when either will do.)
+     *
+     * 这个锁保护所有的mutators. (我们)
      */
     final transient Object lock = new Object();
 
