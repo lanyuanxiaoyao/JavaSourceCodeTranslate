@@ -238,15 +238,24 @@ public interface BlockingQueue<E> extends Queue<E> {
      * When using a capacity-restricted queue, it is generally preferable to
      * use {@link #offer(Object) offer}.
      *
+     * 插入指定的元素到一个队列里面，在不违背队列容量限制的情况下还是可以操作的，并且返回true，当队列没有剩余空间可用了就抛出一个IllegalStateException的异常；
+     * 当使用一个有容量大小限制的队列的时候，通常更倾向于使用offer()来替代add() （因为offer失败会返回false，而add失败会抛异常）
+     *
      * @param e the element to add
+     *        参数是一个要加入的元素
      * @return {@code true} (as specified by {@link Collection#add})
+     *          返回true（由Collection的add方法所指定）
      * @throws IllegalStateException if the element cannot be added at this
      *         time due to capacity restrictions
+     *         抛出异常：IllegalStateException，如果这个元素由于队列容量限制而不能被加入，这个是状态非法异常
      * @throws ClassCastException if the class of the specified element
      *         prevents it from being added to this queue
+     *         抛出异常：ClassCastException，如果指定元素的类阻止它被添加到此队列中，意思就是你要加的对象的类型跟这个队列指定的对象类型不一致
      * @throws NullPointerException if the specified element is null
+     *         抛出异常：NullPointerException，你加入null到这个队列的时候会抛出这个异常
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this queue
+     *         抛出异常：IllegalArgumentException，如果指定元素的某些属性阻止它被添加到此队列中，这个是参数非法异常
      */
     boolean add(E e);
 
