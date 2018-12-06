@@ -117,16 +117,18 @@ public class CopyOnWriteArrayList<E>
      * The lock protecting all mutators.  (We have a mild preference
      * for builtin monitors over ReentrantLock when either will do.)
      *
-     * 这个锁保护所有的mutators. (我们)
+     * 这个锁保护所有的mutators. (我们在一定程度上倾向于ReentrantLock的内置监视器)
      */
     final transient Object lock = new Object();
 
-    /** The array, accessed only via getArray/setArray. */
+    /** The array, accessed only via getArray/setArray. 该数组只能通过getArray/setArray访问*/
     private transient volatile Object[] array;
 
     /**
      * Gets the array.  Non-private so as to also be accessible
      * from CopyOnWriteArraySet class.
+     *
+     * 获取数组. 不是私有的(方法), 便于从CopyOnWriteArraySet类中访问.
      */
     final Object[] getArray() {
         return array;
@@ -134,6 +136,8 @@ public class CopyOnWriteArrayList<E>
 
     /**
      * Sets the array.
+     *
+     * 设置数组.
      */
     final void setArray(Object[] a) {
         array = a;
@@ -141,6 +145,8 @@ public class CopyOnWriteArrayList<E>
 
     /**
      * Creates an empty list.
+     *
+     * 创建一个空数组.
      */
     public CopyOnWriteArrayList() {
         setArray(new Object[0]);
@@ -151,8 +157,10 @@ public class CopyOnWriteArrayList<E>
      * collection, in the order they are returned by the collection's
      * iterator.
      *
-     * @param c the collection of initially held elements
-     * @throws NullPointerException if the specified collection is null
+     * 创建一个包含指定集合中元素的list, 其顺序是集合的迭代器返回的顺序.
+     *
+     * @param c the collection of initially held elements 初始持有元素的集合
+     * @throws NullPointerException if the specified collection is null 如果指定的集合是null
      */
     public CopyOnWriteArrayList(Collection<? extends E> c) {
         Object[] es;
@@ -160,8 +168,13 @@ public class CopyOnWriteArrayList<E>
             es = ((CopyOnWriteArrayList<?>)c).getArray();
         else {
             es = c.toArray();
-            // defend against c.toArray (incorrectly) not returning Object[]
+            // defend against c.toArray (incorrectly) not returning Object[] 防止 c.toArray() (错误地)不返回Object[]对象
             // (see e.g. https://bugs.openjdk.java.net/browse/JDK-6260652)
+            // 简单说明一下这个bug, 在JDK文档中定义了如果List子类使用了不带参数的toArray()方法, 
+            // 那么就应该返回Object[]类型的数组, 但是如果使用某个类型的数组来构建一个新的ArrayList, 
+            // 如String[], 那么使用toArray()返回的仍然是String[]类型数组, 这将导致在之后的代码如果
+            // 试图向返回的数组中插入非String类型的值, 就会报错. 在之前的代码里, toArray()方法是
+            // 使用ArrayList的clone()方法来构建返回的数组的.
             if (es.getClass() != Object[].class)
                 es = Arrays.copyOf(es, es.length, Object[].class);
         }
@@ -171,8 +184,10 @@ public class CopyOnWriteArrayList<E>
     /**
      * Creates a list holding a copy of the given array.
      *
+     * 创建一个持有给定数组副本的list.
+     *
      * @param toCopyIn the array (a copy of this array is used as the
-     *        internal array)
+     *        internal array) 数组(这个数组的副本被用于内部数组)
      * @throws NullPointerException if the specified array is null
      */
     public CopyOnWriteArrayList(E[] toCopyIn) {
@@ -182,7 +197,9 @@ public class CopyOnWriteArrayList<E>
     /**
      * Returns the number of elements in this list.
      *
-     * @return the number of elements in this list
+     * 返回list中元素的数量
+     *
+     * @return the number of elements in this list list中元素的数量
      */
     public int size() {
         return getArray().length;
@@ -191,7 +208,9 @@ public class CopyOnWriteArrayList<E>
     /**
      * Returns {@code true} if this list contains no elements.
      *
-     * @return {@code true} if this list contains no elements
+     * 如果当前list没有包含任何元素, 就返回true
+     *
+     * @return {@code true} if this list contains no elements 如果当前list没有包含任何元素, 就返回true
      */
     public boolean isEmpty() {
         return size() == 0;
@@ -200,13 +219,17 @@ public class CopyOnWriteArrayList<E>
     /**
      * static version of indexOf, to allow repeated calls without
      * needing to re-acquire array each time.
-     * @param o element to search for
-     * @param es the array
-     * @param from first index to search
-     * @param to one past last index to search
-     * @return index of element, or -1 if absent
+     *
+     * indexOf的静态版本, 用于允许重复调用而不需要每次重新获取数组.
+     *
+     * @param o element to search for 查找的元素
+     * @param es the array 数组
+     * @param from first index to search 查找的第一个索引(下标)
+     * @param to one past last index to search 查找的最后一个索引(下标)
+     * @return index of element, or -1 if absent 元素的索引(下标), 如果不存在就返回-1
      */
     private static int indexOfRange(Object o, Object[] es, int from, int to) {
+        // 分为查找的是null和不是null两种情况
         if (o == null) {
             for (int i = from; i < to; i++)
                 if (es[i] == null)
@@ -221,13 +244,17 @@ public class CopyOnWriteArrayList<E>
 
     /**
      * static version of lastIndexOf.
-     * @param o element to search for
-     * @param es the array
-     * @param from index of first element of range, last element to search
-     * @param to one past last element of range, first element to search
-     * @return index of element, or -1 if absent
+     *
+     * lastIndexOf的静态版本
+     *
+     * @param o element to search for 查找的元素
+     * @param es the array 数组
+     * @param from index of first element of range, last element to search 范围内的第一个元素的索引(下标), 查找(过程)的最后一个元素
+     * @param to one past last element of range, first element to search 范围内最后一个元素的索引(下标), 查找(过程)的第一个元素
+     * @return index of element, or -1 if absent 元素的索引(下标), 如果不存在就返回-1
      */
     private static int lastIndexOfRange(Object o, Object[] es, int from, int to) {
+        // 分为查找的是null和不是null两种情况
         if (o == null) {
             for (int i = to - 1; i >= from; i--)
                 if (es[i] == null)
@@ -245,8 +272,11 @@ public class CopyOnWriteArrayList<E>
      * More formally, returns {@code true} if and only if this list contains
      * at least one element {@code e} such that {@code Objects.equals(o, e)}.
      *
-     * @param o element whose presence in this list is to be tested
-     * @return {@code true} if this list contains the specified element
+     * 如果当前list包含指定的元素就返回true. 更准确地说, 当且仅当list包含至少一个元素
+     * e, 使得Objects.equals(o, e), 就返回true.
+     *
+     * @param o element whose presence in this list is to be tested 需要被检测是否存在于当前list的元素
+     * @return {@code true} if this list contains the specified element 如果当前list包含指定的元素就返回true
      */
     public boolean contains(Object o) {
         return indexOf(o) >= 0;
