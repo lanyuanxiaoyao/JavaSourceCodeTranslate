@@ -267,6 +267,11 @@ public interface BlockingQueue<E> extends Queue<E> {
      * generally preferable to {@link #add}, which can fail to insert an
      * element only by throwing an exception.
      *
+     * 插入一个元素到目标队列中，如果没有违反这个队列的容量限制的话，会立即得到执行。
+     * 返回true，当成功插入元素到队列的时候。返回false，当容量不足以让目标元素插入的时候。
+     * 当使用一个有容量限制的队列的时候，offer()方法是比add()方法更好的选择，因为add()在操作失败的时候会抛出异常。
+     *
+     *  下面的参数类似上面的add方法，之后return不同
      * @param e the element to add
      * @return {@code true} if the element was added to this queue, else
      *         {@code false}
@@ -282,11 +287,21 @@ public interface BlockingQueue<E> extends Queue<E> {
      * Inserts the specified element into this queue, waiting if necessary
      * for space to become available.
      *
+     * 插入目标元素到队列当中，（当队列空间不足的时候），线程等待，直到有可用空间为止。
+     *
      * @param e the element to add
+     *          要插入的元素
+     *
      * @throws InterruptedException if interrupted while waiting
+     *         抛出异常：InterruptedException，如果线程等待的时候被中断了
+     *
      * @throws ClassCastException if the class of the specified element
      *         prevents it from being added to this queue
+     *         抛出异常：ClassCastException，插入的元素不符合队列要求的对象类型
+     *
      * @throws NullPointerException if the specified element is null
+     *         抛出异常：NullPointerException，插入元素是null
+     *
      * @throws IllegalArgumentException if some property of the specified
      *         element prevents it from being added to this queue
      */
