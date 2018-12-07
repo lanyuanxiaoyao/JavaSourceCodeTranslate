@@ -298,12 +298,16 @@ public class CopyOnWriteArrayList<E>
      * {@code i >= index && Objects.equals(get(i), e)},
      * or -1 if there is no such index.
      *
-     * @param e element to search for
-     * @param index index to start searching from
+     * 返回指定元素在list中第一次出现的索引, 从index的位置开始向前搜索, 如果list没
+     * 有包含这个元素就返回-1. 更准确地说, 返回最小的索引i, 满足i >= index并且Objects.equals(o, get(i)), 
+     * 如果没有这样的索引就返回-1.
+     *
+     * @param e element to search for 需要查找的元素
+     * @param index index to start searching from 查找起始的索引(下标)
      * @return the index of the first occurrence of the element in
      *         this list at position {@code index} or later in the list;
-     *         {@code -1} if the element is not found.
-     * @throws IndexOutOfBoundsException if the specified index is negative
+     *         {@code -1} if the element is not found. 元素在当前list第一次出现在位置index或之后的索引, 如果元素没有找到就返回-1
+     * @throws IndexOutOfBoundsException if the specified index is negative 如果指定的索引是负数
      */
     public int indexOf(E e, int index) {
         Object[] es = getArray();
