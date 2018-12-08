@@ -298,7 +298,7 @@ public class CopyOnWriteArrayList<E>
      * {@code i >= index && Objects.equals(get(i), e)},
      * or -1 if there is no such index.
      *
-     * 返回指定元素在list中第一次出现的索引, 从index的位置开始向前搜索, 如果list没
+     * 返回指定元素在list中第一次出现的索引, 从index的位置开始向后搜索, 如果list没
      * 有包含这个元素就返回-1. 更准确地说, 返回最小的索引i, 满足i >= index并且Objects.equals(o, get(i)), 
      * 如果没有这样的索引就返回-1.
      *
@@ -326,17 +326,20 @@ public class CopyOnWriteArrayList<E>
      * Returns the index of the last occurrence of the specified element in
      * this list, searching backwards from {@code index}, or returns -1 if
      * the element is not found.
-     * More formally, returns the highest index {@code i} such that
+     * More formally, returns the highest index {@code i} such that 
      * {@code i <= index && Objects.equals(get(i), e)},
      * or -1 if there is no such index.
      *
-     * @param e element to search for
-     * @param index index to start searching backwards from
+     * 返回指定元素在list中最后一次出现的索引, 从index的位置开始向前搜索, 如果如果list没有包含这个元素就返回-1.
+     * 更准确地说, 返回最大的索引i, 满足i <= index并且Objects.equals(o, get(i)), 如果没有这样的索引就返回-1.
+     *
+     * @param e element to search for 需要查找的元素
+     * @param index index to start searching backwards from 查找起始的索引(下标)
      * @return the index of the last occurrence of the element at position
      *         less than or equal to {@code index} in this list;
-     *         -1 if the element is not found.
+     *         -1 if the element is not found. 元素在当前list第一次出现在位置index或之前的索引, 如果元素没有找到就返回-1
      * @throws IndexOutOfBoundsException if the specified index is greater
-     *         than or equal to the current size of this list
+     *         than or equal to the current size of this list 如果指定的索引大于或等于当前的size
      */
     public int lastIndexOf(E e, int index) {
         Object[] es = getArray();
@@ -347,7 +350,9 @@ public class CopyOnWriteArrayList<E>
      * Returns a shallow copy of this list.  (The elements themselves
      * are not copied.)
      *
-     * @return a clone of this list
+     * 返回当前list的浅复制. (元素本身没有被复制)
+     *
+     * @return a clone of this list 当前list的拷贝
      */
     public Object clone() {
         try {
