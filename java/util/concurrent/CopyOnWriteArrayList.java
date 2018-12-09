@@ -362,10 +362,11 @@ public class CopyOnWriteArrayList<E>
             clone.resetLock();
             // Unlike in readObject, here we cannot visibility-piggyback on the
             // volatile write in setArray().
+            // 与readObject不同, 这里我们不能使用setArray()中的volatile保证写入可见性
             VarHandle.releaseFence();
             return clone;
         } catch (CloneNotSupportedException e) {
-            // this shouldn't happen, since we are Cloneable
+            // this shouldn't happen, since we are Cloneable 这里不应发生, 当我们是可关闭的
             throw new InternalError();
         }
     }
@@ -374,14 +375,21 @@ public class CopyOnWriteArrayList<E>
      * Returns an array containing all of the elements in this list
      * in proper sequence (from first to last element).
      *
+     * 按照合适的序列(从第一个到最后一个)返回一个包含list中存储的所有元素的数组.
+     *
      * <p>The returned array will be "safe" in that no references to it are
      * maintained by this list.  (In other words, this method must allocate
      * a new array).  The caller is thus free to modify the returned array.
      *
+     * 返回的数组是安全的, 其中的元素不会存在list维护的引用(换句话说, 这个方法必须
+     * 在内存中申请一个新的数组). 调用者可以自由地修改返回的数组.
+     *
      * <p>This method acts as bridge between array-based and collection-based
      * APIs.
      *
-     * @return an array containing all the elements in this list
+     * 这个方法是扮演着数组和集合之间桥梁角色的API.
+     *
+     * @return an array containing all the elements in this list 一个包含当前list中所有元素的数组
      */
     public Object[] toArray() {
         return getArray().clone();
