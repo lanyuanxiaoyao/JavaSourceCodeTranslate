@@ -403,6 +403,11 @@ public class CopyOnWriteArrayList<E>
      * array is allocated with the runtime type of the specified array and
      * the size of this list.
      *
+     * 按照正确的顺序(从第一个到最后一个)返回一个包含list中存储的所有元素的数组; 运行时
+     * 返回的数组的类型就是(参数)指定的数组的类型. 如果(参数)指定的数组能放得下list(的全部元素), 
+     * 那么就会直接返回这个数组(并将list的元素放入数组中).
+     * 否则, 就会申请一个新的数组, 其类型与指定的数组类型相同, 大小则是list的大小.
+     *
      * <p>If this list fits in the specified array with room to spare
      * (i.e., the array has more elements than this list), the element in
      * the array immediately following the end of the list is set to
@@ -410,28 +415,45 @@ public class CopyOnWriteArrayList<E>
      * list <i>only</i> if the caller knows that this list does not contain
      * any null elements.)
      *
+     * 如果(参数)指定的数组能放得下list, 并且数组的空间还有剩余(数组的元素比list的要多), 那么
+     * 数组中在集合长度之后紧接着的一个数组元素将被设为null. (这仅在调用者确认list中没有包含null
+     * 元素的情况下, 确定list长度的时候非常管用.)
+     *
      * <p>Like the {@link #toArray()} method, this method acts as bridge between
      * array-based and collection-based APIs.  Further, this method allows
      * precise control over the runtime type of the output array, and may,
      * under certain circumstances, be used to save allocation costs.
      *
+     * 与toArray()方法类似, 这个方法是扮演着数组和集合之间桥梁角色的API. 进一步说, 这
+     * 个方法允许精确地控制输出数组的运行时类型, 并且在某些情况下, 这被用来节省申请内存
+     * 耗费时间的开销.
+     *
      * <p>Suppose {@code x} is a list known to contain only strings.
      * The following code can be used to dump the list into a newly
      * allocated array of {@code String}:
+     *
+     * 假设x是一个已知的仅包含字符串的数组. 下面的代码可以被用来将list转化为
+     * 一个新申请的String数组:
      *
      * <pre> {@code String[] y = x.toArray(new String[0]);}</pre>
      *
      * Note that {@code toArray(new Object[0])} is identical in function to
      * {@code toArray()}.
      *
+     * 注意, toArray(new Object[0])与toArray()是完全相同的.
+     *
      * @param a the array into which the elements of the list are to
      *          be stored, if it is big enough; otherwise, a new array of the
      *          same runtime type is allocated for this purpose.
-     * @return an array containing all the elements in this list
+     *
+     *          如果数组足够大, 可以放下整个list的元素, 则用这个数组存储list的元素.
+     *          否则, 就申请一个新的, 类型与a数组类型相同的数组, 来存储list的元素.
+     *
+     * @return an array containing all the elements in this list 一个包含list所有元素的数组
      * @throws ArrayStoreException if the runtime type of the specified array
      *         is not a supertype of the runtime type of every element in
-     *         this list
-     * @throws NullPointerException if the specified array is null
+     *         this list 如果(参数)指定的数组的类型不是list里所有元素的父类型
+     * @throws NullPointerException if the specified array is null 如果(参数)指定的数组为null
      */
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
@@ -447,7 +469,7 @@ public class CopyOnWriteArrayList<E>
         }
     }
 
-    // Positional Access Operations
+    // Positional Access Operations 位置访问操作(通过下标获取数组元素的方法们)
 
     @SuppressWarnings("unchecked")
     static <E> E elementAt(Object[] a, int index) {
@@ -468,8 +490,14 @@ public class CopyOnWriteArrayList<E>
     }
 
     /**
+     * 用synchronized关键字来保持这个方法在并发环境下的同步(在下面的代码中这也是主要的保持同步的方式)
+     */
+
+    /**
      * Replaces the element at the specified position in this list with the
      * specified element.
+     *
+     * 用指定的元素替换list中指定位置(下标)的元素
      *
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
@@ -490,7 +518,9 @@ public class CopyOnWriteArrayList<E>
     /**
      * Appends the specified element to the end of this list.
      *
-     * @param e element to be appended to this list
+     * 添加指定的元素到list的末尾
+     *
+     * @param e element to be appended to this list 将要被添加到list末尾的元素
      * @return {@code true} (as specified by {@link Collection#add})
      */
     public boolean add(E e) {
@@ -508,6 +538,9 @@ public class CopyOnWriteArrayList<E>
      * Inserts the specified element at the specified position in this
      * list. Shifts the element currently at that position (if any) and
      * any subsequent elements to the right (adds one to their indices).
+     *
+     * 插入指定的元素到list指定的位置上. 向右移动指定位置上和其后续(如果有)的所
+     * 有元素
      *
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
@@ -536,6 +569,9 @@ public class CopyOnWriteArrayList<E>
      * Removes the element at the specified position in this list.
      * Shifts any subsequent elements to the left (subtracts one from their
      * indices).  Returns the element that was removed from the list.
+     *
+     * 移除list中指定位置的元素. 向左移动该位置之后的所有元素. 返回从list中被
+     * 移除的元素.
      *
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
