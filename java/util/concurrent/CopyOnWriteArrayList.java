@@ -622,12 +622,13 @@ public class CopyOnWriteArrayList<E>
      * A version of remove(Object) using the strong hint that given
      * recent snapshot contains o at the given index.
      *
-     * 
+     * 一个使用包含给定索引的快照的强提示的remove(Object)的版本
      */
     private boolean remove(Object o, Object[] snapshot, int index) {
         synchronized (lock) {
             Object[] current = getArray();
             int len = current.length;
+            // 判断快照和当前的数组是否相同, 来判断是否被其他线程修改过
             if (snapshot != current) findIndex: {
                 int prefix = Math.min(index, len);
                 for (int i = 0; i < prefix; i++) {
@@ -662,10 +663,16 @@ public class CopyOnWriteArrayList<E>
      * This call shortens the list by {@code (toIndex - fromIndex)} elements.
      * (If {@code toIndex==fromIndex}, this operation has no effect.)
      *
-     * @param fromIndex index of first element to be removed
-     * @param toIndex index after last element to be removed
+     * 移除list中所有下标在fromIndex(包含)和toIndex(不包含)之间的元素.
+     * 向左移动后面的所有元素(减少其下标). 这个方法的调用会减少list(toIndex - fromIndex)
+     * 个元素. (如果toIndex==fromIndex), 这个操作将没有任何效果.
+     *
+     * @param fromIndex index of first element to be removed 第一个被移除的元素的索引
+     * @param toIndex index after last element to be removed 最后一个被移除的元素的下一个索引
      * @throws IndexOutOfBoundsException if fromIndex or toIndex out of range
      *         ({@code fromIndex < 0 || toIndex > size() || toIndex < fromIndex})
+     * 数组越界的异常, 有几种情况, 如果fromIndex或者toIndex超出数组范围, 或者
+     * fromIndex小于0, 或者toIndex大于size(数组的大小), 或者toIndex小于fromInde
      */
     void removeRange(int fromIndex, int toIndex) {
         synchronized (lock) {
@@ -691,8 +698,10 @@ public class CopyOnWriteArrayList<E>
     /**
      * Appends the element, if not present.
      *
-     * @param e element to be added to this list, if absent
-     * @return {@code true} if the element was added
+     * 如果(指定的元素)不存在, 就追加(这个元素到list中).
+     *
+     * @param e element to be added to this list, if absent 如果(指定的元素)不存在, 就添加到当前list中
+     * @return {@code true} if the element was added 如果元素被添加, 就返回true
      */
     public boolean addIfAbsent(E e) {
         Object[] snapshot = getArray();
@@ -703,6 +712,8 @@ public class CopyOnWriteArrayList<E>
     /**
      * A version of addIfAbsent using the strong hint that given
      * recent snapshot does not contain e.
+     *
+     * 一个当给定的快照不包含e时使用的addIfAbsent版本
      */
     private boolean addIfAbsent(E e, Object[] snapshot) {
         synchronized (lock) {
@@ -710,6 +721,7 @@ public class CopyOnWriteArrayList<E>
             int len = current.length;
             if (snapshot != current) {
                 // Optimize for lost race to another addXXX operation
+                // 对与其他addXXX操作竞争失败情况的优化
                 int common = Math.min(snapshot.length, len);
                 for (int i = 0; i < common; i++)
                     if (current[i] != snapshot[i]
