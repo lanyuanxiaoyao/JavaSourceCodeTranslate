@@ -741,10 +741,12 @@ public class CopyOnWriteArrayList<E>
      * Returns {@code true} if this list contains all of the elements of the
      * specified collection.
      *
-     * @param c collection to be checked for containment in this list
+     * 如果当前list包含指定集合里的全部元素, 就返回true
+     *
+     * @param c collection to be checked for containment in this list 要检测是否包含在当前list中的集合
      * @return {@code true} if this list contains all of the elements of the
-     *         specified collection
-     * @throws NullPointerException if the specified collection is null
+     *         specified collection 如果当前list包含指定集合里的全部元素, 就返回true
+     * @throws NullPointerException if the specified collection is null 如果指定集合为null
      * @see #contains(Object)
      */
     public boolean containsAll(Collection<?> c) {
@@ -762,15 +764,18 @@ public class CopyOnWriteArrayList<E>
      * the specified collection. This is a particularly expensive operation
      * in this class because of the need for an internal temporary array.
      *
-     * @param c collection containing elements to be removed from this list
-     * @return {@code true} if this list changed as a result of the call
+     * 移除list中所有被包含在指定集合中的元素. 这是在这个类中一个非常耗费资源的操作,
+     * 因为(这个操作)需要一个临时的内部数组.
+     *
+     * @param c collection containing elements to be removed from this list 包含着将被从list中移除的元素的集合
+     * @return {@code true} if this list changed as a result of the call 如果这个方法的调用改变了list, 就返回true
      * @throws ClassCastException if the class of an element of this list
-     *         is incompatible with the specified collection
+     *         is incompatible with the specified collection 如果list中有一个元素的类型与指定集合中的类型不相容
      * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if this list contains a null element and the
      *         specified collection does not permit null elements
      * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>),
-     *         or if the specified collection is null
+     *         or if the specified collection is null 如果list中包含一个null元素并且指定集合中不允许存在null元素, 或者指定的集合为null
      * @see #remove(Object)
      */
     public boolean removeAll(Collection<?> c) {
@@ -783,15 +788,18 @@ public class CopyOnWriteArrayList<E>
      * specified collection.  In other words, removes from this list all of
      * its elements that are not contained in the specified collection.
      *
-     * @param c collection containing elements to be retained in this list
-     * @return {@code true} if this list changed as a result of the call
+     * 仅保留list中被指定集合包含的元素. 换句话说, 移除list中所有没有被包含在
+     * 指定集合中的元素.
+     *
+     * @param c collection containing elements to be retained in this list 包含list中将要被保留下来的元素的集合
+     * @return {@code true} if this list changed as a result of the call 如果这个方法的调用改变了list, 就返回true
      * @throws ClassCastException if the class of an element of this list
-     *         is incompatible with the specified collection
+     *         is incompatible with the specified collection 如果list中有一个元素的类型与指定集合中的类型不相容
      * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>)
      * @throws NullPointerException if this list contains a null element and the
      *         specified collection does not permit null elements
      * (<a href="{@docRoot}/java.base/java/util/Collection.html#optional-restrictions">optional</a>),
-     *         or if the specified collection is null
+     *         or if the specified collection is null 如果list中包含一个null元素并且指定集合中不允许存在null元素, 或者指定的集合为null
      * @see #remove(Object)
      */
     public boolean retainAll(Collection<?> c) {
@@ -805,9 +813,12 @@ public class CopyOnWriteArrayList<E>
      * this list, in the order that they are returned by the
      * specified collection's iterator.
      *
-     * @param c collection containing elements to be added to this list
-     * @return the number of elements added
-     * @throws NullPointerException if the specified collection is null
+     * 根据指定集合的迭代器返回的顺序, 在当前list的末尾, 追加指定集合中所有
+     * 还未被包含在当前集合中的元素.
+     *
+     * @param c collection containing elements to be added to this list 包含将要被添加进当前list的集合
+     * @return the number of elements added 被添加的元素的数量
+     * @throws NullPointerException if the specified collection is null 如果指定的集合为null
      * @see #addIfAbsent(Object)
      */
     public int addAllAbsent(Collection<? extends E> c) {
