@@ -848,6 +848,8 @@ public class CopyOnWriteArrayList<E>
     /**
      * Removes all of the elements from this list.
      * The list will be empty after this call returns.
+     *
+     * 移除list中的全部元素. 这个方法调用后会变成空的list.
      */
     public void clear() {
         synchronized (lock) {
@@ -860,9 +862,11 @@ public class CopyOnWriteArrayList<E>
      * of this list, in the order that they are returned by the specified
      * collection's iterator.
      *
-     * @param c collection containing elements to be added to this list
-     * @return {@code true} if this list changed as a result of the call
-     * @throws NullPointerException if the specified collection is null
+     * 根据指定集合的迭代器返回的顺序, 追加指定集合中的全部元素到当前list的末尾.
+     *
+     * @param c collection containing elements to be added to this list 将要被添加进list中的元素的Collection集合
+     * @return {@code true} if this list changed as a result of the call 如果list被该方法的调用改变了, 就返回true
+     * @throws NullPointerException if the specified collection is null 如果指定的Collection集合是null
      * @see #add(Object)
      */
     public boolean addAll(Collection<? extends E> c) {
@@ -893,12 +897,17 @@ public class CopyOnWriteArrayList<E>
      * in this list in the order that they are returned by the
      * specified collection's iterator.
      *
+     *
+     * 在指定的位置插入指定Collection集合的全部元素到当前list中. 向右移动当前位置的
+     * 的元素以及当前位置之后的元素(如果存在)(增加其下标). 新的元素会按照指定的Collection
+     * 迭代器返回的顺序出现在list当中.
+     *
      * @param index index at which to insert the first element
-     *        from the specified collection
-     * @param c collection containing elements to be added to this list
-     * @return {@code true} if this list changed as a result of the call
+     *        from the specified collection 将要插入的指定的Collection集合的第一个元素所在的位置(下标)
+     * @param c collection containing elements to be added to this list 包含将要插入到当前list中所有元素的集合
+     * @return {@code true} if this list changed as a result of the call 如果list被改变了, 将会返回true作为调用的结果
      * @throws IndexOutOfBoundsException {@inheritDoc}
-     * @throws NullPointerException if the specified collection is null
+     * @throws NullPointerException if the specified collection is null 如果指定的集合为null
      * @see #add(int,Object)
      */
     public boolean addAll(int index, Collection<? extends E> c) {
