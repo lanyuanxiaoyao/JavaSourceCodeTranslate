@@ -976,7 +976,7 @@ public class CopyOnWriteArrayList<E>
     boolean bulkRemove(Predicate<? super E> filter, int i, int end) {
         // assert Thread.holdsLock(lock);
         final Object[] es = getArray();
-        // Optimize for initial run of survivors
+        // Optimize for initial run of survivors 对未移除的元素的初始化运行的优化
         for (; i < end && !filter.test(elementAt(es, i)); i++)
             ;
         if (i < end) {
@@ -989,7 +989,7 @@ public class CopyOnWriteArrayList<E>
                     setBit(deathRow, i - beg);
                     deleted++;
                 }
-            // Did filter reentrantly modify the list?
+            // Did filter reentrantly modify the list? 过滤器是否可以重入地修改list?
             if (es != getArray())
                 throw new ConcurrentModificationException();
             final Object[] newElts = Arrays.copyOf(es, es.length - deleted);
@@ -1039,11 +1039,15 @@ public class CopyOnWriteArrayList<E>
     /**
      * Saves this list to a stream (that is, serializes it).
      *
+     * 保存ArrayList实例的状态到一个(输出)流当中(意思就是, 进行序列化操作)
+     *
      * @param s the stream
-     * @throws java.io.IOException if an I/O error occurs
+     * @throws java.io.IOException if an I/O error occurs 如果发生了I/O错误
      * @serialData The length of the array backing the list is emitted
      *               (int), followed by all of its elements (each an Object)
      *               in the proper order.
+     *               先(向流中)传入ArrayList实例的数组长度(整型), 然后紧跟着按照恰
+     *               当的顺序传入list数组中的元素
      */
     private void writeObject(java.io.ObjectOutputStream s)
         throws java.io.IOException {
@@ -1051,35 +1055,38 @@ public class CopyOnWriteArrayList<E>
         s.defaultWriteObject();
 
         Object[] es = getArray();
-        // Write out array length
+        // Write out array length 输出数组的长度
         s.writeInt(es.length);
 
-        // Write out all elements in the proper order.
+        // Write out all elements in the proper order. 按顺序输出全部元素
         for (Object element : es)
             s.writeObject(element);
     }
 
     /**
      * Reconstitutes this list from a stream (that is, deserializes it).
+     *
+     * 从一个流中重新构建一个ArrayList实例(意思就是, 进行反序列化操作)
+     *
      * @param s the stream
      * @throws ClassNotFoundException if the class of a serialized object
-     *         could not be found
-     * @throws java.io.IOException if an I/O error occurs
+     *         could not be found 如果一个反序列化对象的类型无法被找到
+     * @throws java.io.IOException if an I/O error occurs 如果发生I/O错误
      */
     private void readObject(java.io.ObjectInputStream s)
         throws java.io.IOException, ClassNotFoundException {
 
         s.defaultReadObject();
 
-        // bind to new lock
+        // bind to new lock 绑定一个新的锁
         resetLock();
 
-        // Read in array length and allocate array
+        // Read in array length and allocate array 读入数组长度并申请数组空间
         int len = s.readInt();
         SharedSecrets.getJavaObjectInputStreamAccess().checkArray(s, Object[].class, len);
         Object[] es = new Object[len];
 
-        // Read in all elements in the proper order.
+        // Read in all elements in the proper order. 按顺序读入全部的元素
         for (int i = 0; i < len; i++)
             es[i] = s.readObject();
         setArray(es);
@@ -1092,6 +1099,8 @@ public class CopyOnWriteArrayList<E>
      * square brackets ({@code "[]"}).  Adjacent elements are separated by
      * the characters {@code ", "} (comma and space).  Elements are
      * converted to strings as by {@link String#valueOf(Object)}.
+     *
+     * 返回当前list的一个字符串表示. 这个字符串包含了list中元素
      *
      * @return a string representation of this list
      */
