@@ -1100,9 +1100,11 @@ public class CopyOnWriteArrayList<E>
      * the characters {@code ", "} (comma and space).  Elements are
      * converted to strings as by {@link String#valueOf(Object)}.
      *
-     * 返回当前list的一个字符串表示. 这个字符串包含了list中元素
+     * 返回当前list的一个字符串表示. 这个字符串包含了list中元素的字符串表示, 顺序是
+     * 迭代器返回的顺序, 使用方括号"[]"包裹起来. 相邻的元素使用符号", "(逗号和空格)
+     * (区分开). 元素使用String.valueOf(Object)方法来转换到字符串.
      *
-     * @return a string representation of this list
+     * @return a string representation of this list 当前list的字符串表示
      */
     public String toString() {
         return Arrays.toString(getArray());
@@ -1119,6 +1121,8 @@ public class CopyOnWriteArrayList<E>
      * elements at the same position in the sequence are <em>equal</em>.
      * Two elements {@code e1} and {@code e2} are considered
      * <em>equal</em> if {@code Objects.equals(e1, e2)}.
+     *
+     * 比较指定对象与当前list是否相等. 如果指定对象和当前的对象相同就返回true
      *
      * @param o the object to be compared for equality with this list
      * @return {@code true} if the specified object is equal to this list
