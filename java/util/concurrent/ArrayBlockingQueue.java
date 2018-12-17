@@ -58,12 +58,19 @@ import java.util.function.Predicate;
  * are inserted at the tail of the queue, and the queue retrieval
  * operations obtain elements at the head of the queue.
  *
+ * 一个由数组构成的有界的阻塞队列。这个队列满足先进先出原则。队列头是队列中存在时间最长的元素，队列尾是存在时间最短的元素；
+ * 新的元素被插入在队列的尾部，这个队列的检索主要是指获取队列的队列头。
+ *
  * <p>This is a classic &quot;bounded buffer&quot;, in which a
  * fixed-sized array holds elements inserted by producers and
  * extracted by consumers.  Once created, the capacity cannot be
  * changed.  Attempts to {@code put} an element into a full queue
  * will result in the operation blocking; attempts to {@code take} an
  * element from an empty queue will similarly block.
+ *
+ * 这是一个典型的有界缓冲区，在这个固定大小的数组里面，保存着由生产者生成的元素和由消费者提取的元素。
+ * 一旦被创建，这个（数组队列）的大小就不能被改变。尝试去放一个元素到一个满的队列当中，将会造成阻塞；
+ * 尝试去从一个空的队列当中取元素将会同样地被阻塞。
  *
  * <p>This class supports an optional fairness policy for ordering
  * waiting producer and consumer threads.  By default, this ordering
