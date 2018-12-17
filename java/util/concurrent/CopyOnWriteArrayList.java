@@ -1180,9 +1180,11 @@ public class CopyOnWriteArrayList<E>
      * traversing the iterator. The iterator does <em>NOT</em> support the
      * {@code remove} method.
      *
-     * 返回的迭代器在构建的时候提供了一个list的状态的快照
+     * 返回的迭代器在构建的时候提供了一个list的状态的快照. 在遍历迭代器的时候不需要同步.
+     * 迭代器不支持remove方法.
      *
      * @return an iterator over the elements in this list in proper sequence
+     *         一个按适当的顺序返的当前list中元素的迭代器.
      */
     public Iterator<E> iterator() {
         return new COWIterator<E>(getArray(), 0);
@@ -1195,6 +1197,9 @@ public class CopyOnWriteArrayList<E>
      * when the iterator was constructed. No synchronization is needed while
      * traversing the iterator. The iterator does <em>NOT</em> support the
      * {@code remove}, {@code set} or {@code add} methods.
+     *
+     * 返回的迭代器在构建的时候提供了一个list的状态的快照. 在遍历迭代器的时候不需要同步.
+     * 迭代器不支持remove, set, add方法.
      */
     public ListIterator<E> listIterator() {
         return new COWIterator<E>(getArray(), 0);
