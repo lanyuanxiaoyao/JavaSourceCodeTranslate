@@ -1122,10 +1122,14 @@ public class CopyOnWriteArrayList<E>
      * Two elements {@code e1} and {@code e2} are considered
      * <em>equal</em> if {@code Objects.equals(e1, e2)}.
      *
-     * 比较指定对象与当前list是否相等. 如果指定对象和当前的对象相同就返回true
+     * 比较指定对象与当前list是否相等. 如果指定对象和当前的对象相同, 或者如果
+     * (指定队列)也是一个List并且通过迭代器返回的元素序列与当前list的迭代器返回
+     * 的元素序列相同, 就返回true. 两个序列, 如果他们有相同的长度并且相应的元素在
+     * 序列里相同的位置, 那么他们被认为是相等的. 两个元素e1和e2, 如果Objects.equals(e1, e2),
+     * 那么他们被认为是相等的.
      *
-     * @param o the object to be compared for equality with this list
-     * @return {@code true} if the specified object is equal to this list
+     * @param o the object to be compared for equality with this list 要与当前list比较是否相等的对象
+     * @return {@code true} if the specified object is equal to this list 如果指定的对象与当前list相等, 就返回true
      */
     public boolean equals(Object o) {
         if (o == this)
@@ -1153,9 +1157,13 @@ public class CopyOnWriteArrayList<E>
     /**
      * Returns the hash code value for this list.
      *
+     * 返回当前list的哈希值.
+     *
      * <p>This implementation uses the definition in {@link List#hashCode}.
      *
-     * @return the hash code value for this list
+     * 当前的实现使用的是List.hashCode()的定义.
+     *
+     * @return the hash code value for this list 当前list的哈希值
      */
     public int hashCode() {
         Object[] es = getArray();
@@ -1165,10 +1173,14 @@ public class CopyOnWriteArrayList<E>
     /**
      * Returns an iterator over the elements in this list in proper sequence.
      *
+     * 按适当的顺序返回当前list中元素的迭代器.
+     *
      * <p>The returned iterator provides a snapshot of the state of the list
      * when the iterator was constructed. No synchronization is needed while
      * traversing the iterator. The iterator does <em>NOT</em> support the
      * {@code remove} method.
+     *
+     * 返回的迭代器在构建的时候提供了一个list的状态的快照
      *
      * @return an iterator over the elements in this list in proper sequence
      */
