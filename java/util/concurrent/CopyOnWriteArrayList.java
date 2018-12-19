@@ -1213,6 +1213,9 @@ public class CopyOnWriteArrayList<E>
      * traversing the iterator. The iterator does <em>NOT</em> support the
      * {@code remove}, {@code set} or {@code add} methods.
      *
+     * 返回的迭代器在构建的时候提供了一个list的状态的快照. 在遍历迭代器的时候不需要同步.
+     * 迭代器不支持remove, set, add方法.
+     *
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     public ListIterator<E> listIterator(int index) {
@@ -1227,6 +1230,8 @@ public class CopyOnWriteArrayList<E>
     /**
      * Returns a {@link Spliterator} over the elements in this list.
      *
+     * 返回当前list所有元素的一个Spliterator(分割器).
+     *
      * <p>The {@code Spliterator} reports {@link Spliterator#IMMUTABLE},
      * {@link Spliterator#ORDERED}, {@link Spliterator#SIZED}, and
      * {@link Spliterator#SUBSIZED}.
@@ -1235,7 +1240,9 @@ public class CopyOnWriteArrayList<E>
      * when the spliterator was constructed. No synchronization is needed while
      * operating on the spliterator.
      *
-     * @return a {@code Spliterator} over the elements in this list
+     * 返回的迭代器在构建的时候提供了一个list的状态的快照. 在遍历迭代器的时候不需要同步.
+     *
+     * @return a {@code Spliterator} over the elements in this list 当前list所有元素的一个Spliterator
      * @since 1.8
      */
     public Spliterator<E> spliterator() {
@@ -1244,9 +1251,9 @@ public class CopyOnWriteArrayList<E>
     }
 
     static final class COWIterator<E> implements ListIterator<E> {
-        /** Snapshot of the array */
+        /** Snapshot of the array 数组的快照 */
         private final Object[] snapshot;
-        /** Index of element to be returned by subsequent call to next.  */
+        /** Index of element to be returned by subsequent call to next. 需要由后续调用返回的下一个元素的索引 */
         private int cursor;
 
         COWIterator(Object[] es, int initialCursor) {
@@ -1295,6 +1302,9 @@ public class CopyOnWriteArrayList<E>
 
         /**
          * Not supported. Always throws UnsupportedOperationException.
+         *
+         * 不支持. 总是会抛出UnsupportedOperationException异常.
+         *
          * @throws UnsupportedOperationException always; {@code set}
          *         is not supported by this iterator.
          */
@@ -1304,6 +1314,9 @@ public class CopyOnWriteArrayList<E>
 
         /**
          * Not supported. Always throws UnsupportedOperationException.
+         *
+         * 不支持. 总是会抛出UnsupportedOperationException异常.
+         *
          * @throws UnsupportedOperationException always; {@code add}
          *         is not supported by this iterator.
          */
@@ -1328,9 +1341,15 @@ public class CopyOnWriteArrayList<E>
      * The returned list is backed by this list, so changes in the
      * returned list are reflected in this list.
      *
+     * 返回指定的fromIndex(包含fromIndex)和toIndex(不包含toIndex)之间的list的一部分
+     * 视图. 返回的list是基于当前list的, 所以在当前list发生的非结构化修改都会反映到返
+     * 回的list中.
+     *
      * <p>The semantics of the list returned by this method become
      * undefined if the backing list (i.e., this list) is modified in
      * any way other than via the returned list.
+     *
+     * 
      *
      * @param fromIndex low endpoint (inclusive) of the subList
      * @param toIndex high endpoint (exclusive) of the subList
