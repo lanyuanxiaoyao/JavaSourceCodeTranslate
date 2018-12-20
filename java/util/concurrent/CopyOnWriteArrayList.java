@@ -1349,11 +1349,12 @@ public class CopyOnWriteArrayList<E>
      * undefined if the backing list (i.e., this list) is modified in
      * any way other than via the returned list.
      *
-     * 
+     * 如果当前list通过除了返回子list外的任何方式进行了修改, 那么通过这个方法
+     * 返回的子list的语义都会变成未定义.
      *
-     * @param fromIndex low endpoint (inclusive) of the subList
-     * @param toIndex high endpoint (exclusive) of the subList
-     * @return a view of the specified range within this list
+     * @param fromIndex low endpoint (inclusive) of the subList subList的最左端(包含)
+     * @param toIndex high endpoint (exclusive) of the subList subList的最右端(不包含)
+     * @return a view of the specified range within this list 当前列表中指定范围内的一个视图
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     public List<E> subList(int fromIndex, int toIndex) {
