@@ -34,6 +34,9 @@ import java.util.function.Consumer;
  * access data (such as a linked list), {@link AbstractSequentialList} should
  * be used in preference to this class.
  *
+ * 这个类提供了一个List接口的骨骼实现, 减少实现(List)这个接口基于随机访问的数据存储
+ * (比如一个数组)需要的努力, AbstractSequentialList应该优先使用当前类.
+ *
  * <p>To implement an unmodifiable list, the programmer needs only to extend
  * this class and provide implementations for the {@link #get(int)} and
  * {@link List#size() size()} methods.
