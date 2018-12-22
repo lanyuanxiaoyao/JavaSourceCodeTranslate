@@ -41,6 +41,8 @@ import java.util.function.Consumer;
  * this class and provide implementations for the {@link #get(int)} and
  * {@link List#size() size()} methods.
  *
+ * 实现一个不可修改的list, 程序员仅需要继承这个类并提供get(int)和size()方法.
+ *
  * <p>To implement a modifiable list, the programmer must additionally
  * override the {@link #set(int, Object) set(int, E)} method (which otherwise
  * throws an {@code UnsupportedOperationException}).  If the list is
