@@ -98,6 +98,9 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * This implementation iterates over the elements in the collection,
      * checking each element in turn for equality with the specified element.
 	 * 这个实现对该集合中的所有元素进行迭代，每次检查一个元素判断是否与具体元素相等。
+     * 该方法用于判断集合中是否包含某一元素。当某一元素为null（NPE警告）时为了避免
+     * equals方法报空指针，单独判断集合中是否包含null值。当元素不为空的时候，遍历集
+     * 合找出与元素相等的元素（通过equals方法）。
      *
      * @throws ClassCastException   {@inheritDoc}
      * @throws NullPointerException {@inheritDoc}
@@ -135,6 +138,10 @@ public abstract class AbstractCollection<E> implements Collection<E> {
 	 * 中长度进行了改变还是一样，这种情况可能发生在集合允许在迭代过程中进行修改。
 	 * 这个size方法只会在优化提示的时候进行调用（这句话怎么翻译？），就算迭代器返回了
 	 * 一个不同的元素数量也会返回正确的结果。
+     * 该方法用于将集合转化成一个数组，数组的长度等于集合的size()方法返回值。首先定义一个
+     * 以集合大小（size()方法返回的长度，这里为了区分叫做大小）为长度的Object数组。遍历数
+     * 组，每次循环中将集合中的元素对数组中的元素进行赋值，一直到集合中没有元素的时候，这
+     * 个时候会将现有数组复制成一个新的数据返回。（这里主要是为了防止集合在转换过程中变化）
      *
      * <p>This method is equivalent to:
      *
@@ -172,6 +179,20 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * concurrent modification during iteration.  The {@code size} method is
      * called only as an optimization hint; the correct result is returned
      * even if the iterator returns a different number of elements.
+     *
+     * 这个实现方法由迭代器以相同的顺序返回一个包含所有元素的数组，存储在连续的数组元素
+     * 中，从下标0开始（大概意思就是说把一个集合转化成一个固定的数组，这个数组通过参数传入）。
+     * 如果这个集合中的元素太多了在这个数组中放不下的话，那么会返回一个新分配的等同于集合长度
+     * 的数组。就算集合的长度在改变也是一样的，这种情况一般发生在允许遍历中编辑的集合中。
+     *
+     * 首先获取集合的大小（size()方法），判断传入的参数数组的长度和原集合的大小，如果数组
+     * 的长度大则使用数组的长度，否则使用和集合大小一样的一个新的数组。然后开始遍历集合，将
+     * 集合的元素赋值给数组。这时候有三种情况：第一种情况参数数组的长度和集合的大小相同，则
+     * 遍历数组结束的时候集合也遍历完成，这时候直接返回数组即可；第二种情况数组的长度大于集合
+     * 的大小，这时候又要分三种情况，如果当前数组等价于参数数组的时候，往数组中填入null值，如
+     * 果参数数组的长度小于当前数组的时候，将当前数组赋值成一个新的返回，其他情况下先将当前数
+     * 组复制给参数数组，再在后面的值中插入null；第三种情况下如果数组遍历完了集合中还有元素，
+     * 这个时候就将集合遍历全部复制给数组再返回。
      *
      * <p>This method is equivalent to:
      *
