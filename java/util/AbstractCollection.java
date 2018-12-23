@@ -240,6 +240,10 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * Some VMs reserve some header words in an array.
      * Attempts to allocate larger arrays may result in
      * OutOfMemoryError: Requested array size exceeds VM limit
+	 *
+	 * 该数组的分配的最大尺寸。
+	 * 一些虚拟机在数组中存了一些标语。
+	 * 尝试分配更大的数组可能会引发OutOfMemoryError（OOM）。
      */
     private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
 
@@ -247,6 +251,15 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * Reallocates the array being used within toArray when the iterator
      * returned more elements than expected, and finishes filling it from
      * the iterator.
+	 *
+	 * 当迭代器（iterator）返回的元素个数比你想要的数组大小大的时候，会对数组进行
+	 * 重新分配，直到迭代器中的元素没了。主要是为了防止赋值的数组的大小小于集合中的
+	 * 元素个数。此方法只有在执行toArray()方法过程时集合尺寸大小大于数组大小的时候。
+	 * 代码中可以看到在数组大小不足时会进行扩容，扩容的规则为原大小*1.5+1。
+	 * 当数组的大小大于MAX_ARRAY_SIZE时，执行hugeCapacity方法。hugeCapacity方法中
+	 * 传入当前可容纳的数组大小+1。如果该参数已经变成负数了，则表示当前数据的大小已经
+	 * 超过最大值。如果该参数为非负数，则将它与MAX_ARRAY_SIZE相比较，如果小于MAX_ARRAY_SIZE
+	 * 则大小为MAX_ARRAY_SIZE，如果大于则大小为Integer的最大长度。
      *
      * @param r the array, replete with previously stored elements
      * @param it the in-progress iterator over this collection
@@ -281,6 +294,7 @@ public abstract class AbstractCollection<E> implements Collection<E> {
     }
 
     // Modification Operations
+	// 以下都是集合的修改操作
 
     /**
      * {@inheritDoc}
@@ -288,6 +302,9 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @implSpec
      * This implementation always throws an
      * {@code UnsupportedOperationException}.
+	 *
+	 * 该方法的实现总是抛出一个UnsupportedOperationException。
+	 * 一般是为了防止像Arrays.asList()方法返回的集合对象进行修改等操作。
      *
      * @throws UnsupportedOperationException {@inheritDoc}
      * @throws ClassCastException            {@inheritDoc}
@@ -306,11 +323,17 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * This implementation iterates over the collection looking for the
      * specified element.  If it finds the element, it removes the element
      * from the collection using the iterator's remove method.
+	 *
+	 * 首先通过迭代器查找想要remove的元素，
+	 * 如果找到了这个元素，则使用迭代器的remove方法进行remove。
      *
      * <p>Note that this implementation throws an
      * {@code UnsupportedOperationException} if the iterator returned by this
      * collection's iterator method does not implement the {@code remove}
      * method and this collection contains the specified object.
+	 *
+	 * 如果该集合的迭代器没有实现remove方法并且集合不为空的时候，会抛出
+	 * UnsupportedOperationException。
      *
      * @throws UnsupportedOperationException {@inheritDoc}
      * @throws ClassCastException            {@inheritDoc}
@@ -347,6 +370,9 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * checking each element returned by the iterator in turn to see
      * if it's contained in this collection.  If all elements are so
      * contained {@code true} is returned, otherwise {@code false}.
+	 *
+	 * 通过迭代器检查每个元素看它是不是在这个集合中包含了。
+	 * 如果参数集合中所有的元素都包含了就返回true，否则返回false。
      *
      * @throws ClassCastException            {@inheritDoc}
      * @throws NullPointerException          {@inheritDoc}
@@ -365,10 +391,15 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * @implSpec
      * This implementation iterates over the specified collection, and adds
      * each object returned by the iterator to this collection, in turn.
+	 *
+	 * 这个方法对传入的参数进行迭代，将其中的每一个元素轮流添加到本集合中。
      *
      * <p>Note that this implementation will throw an
      * {@code UnsupportedOperationException} unless {@code add} is
      * overridden (assuming the specified collection is non-empty).
+	 *
+	 * 该实现会抛出UnsupportedOperationException除非add()方法被重写了
+	 * （指定的集合不能为空）。
      *
      * @throws UnsupportedOperationException {@inheritDoc}
      * @throws ClassCastException            {@inheritDoc}
@@ -394,12 +425,17 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * element returned by the iterator in turn to see if it's contained
      * in the specified collection.  If it's so contained, it's removed from
      * this collection with the iterator's {@code remove} method.
+	 *
+	 * 这个方法其实就是对集合进行遍历，如果当前集合包含该元素就将它进行remove
+	 * （通过迭代器的remove方法）。
      *
      * <p>Note that this implementation will throw an
      * {@code UnsupportedOperationException} if the iterator returned by the
      * {@code iterator} method does not implement the {@code remove} method
      * and this collection contains one or more elements in common with the
      * specified collection.
+	 *
+	 * 如果在remove()没有被实现就抛出UnsupportedOperationException。
      *
      * @throws UnsupportedOperationException {@inheritDoc}
      * @throws ClassCastException            {@inheritDoc}
@@ -429,12 +465,19 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * element returned by the iterator in turn to see if it's contained
      * in the specified collection.  If it's not so contained, it's removed
      * from this collection with the iterator's {@code remove} method.
+	 *
+	 * 遍历本集合，如果指定的集合中包含本集合中的元素，就将其remove
+	 * （通过本集合迭代器的remove()方法）。
+	 * removeAll()和retainAll()两个方法的区别，一个是将参数中的元素去除，
+	 * 另一个则是如果参数中没有该元素就去除。
      *
      * <p>Note that this implementation will throw an
      * {@code UnsupportedOperationException} if the iterator returned by the
      * {@code iterator} method does not implement the {@code remove} method
      * and this collection contains one or more elements not present in the
      * specified collection.
+	 *
+	 * 如果迭代器没有实现remove()方法时抛出UnsupportedOperationException。
      *
      * @throws UnsupportedOperationException {@inheritDoc}
      * @throws ClassCastException            {@inheritDoc}
@@ -464,11 +507,16 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * element using the {@code Iterator.remove} operation.  Most
      * implementations will probably choose to override this method for
      * efficiency.
+	 *
+	 * 通过迭代器的remove()方法对集合中的所有元素进行remove。
+	 * 大多数具体实现为了效率都会对该方法进行覆写。
      *
      * <p>Note that this implementation will throw an
      * {@code UnsupportedOperationException} if the iterator returned by this
      * collection's {@code iterator} method does not implement the
      * {@code remove} method and this collection is non-empty.
+	 *
+	 * 集合迭代器没有实现remove()方法的时候抛出UnsupportedOperationException。
      *
      * @throws UnsupportedOperationException {@inheritDoc}
      */
@@ -490,6 +538,9 @@ public abstract class AbstractCollection<E> implements Collection<E> {
      * ({@code "[]"}).  Adjacent elements are separated by the characters
      * {@code ", "} (comma and space).  Elements are converted to strings as
      * by {@link String#valueOf(Object)}.
+	 *
+	 * 将整个集合转换成String对象返回。String对象中包含所有的元素（通过迭代器获取）,
+	 * 最外面为[]，里面的元素通过逗号隔离。
      *
      * @return a string representation of this collection
      */
