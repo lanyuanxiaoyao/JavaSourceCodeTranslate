@@ -49,9 +49,14 @@ import java.util.function.Consumer;
  * variable-size the programmer must additionally override the
  * {@link #add(int, Object) add(int, E)} and {@link #remove(int)} methods.
  *
+ * 实现一个可修改的list, 程序员必须额外重写set(int, E)方法(抛出UnsupportedOperationException异常).
+ * 如果这个list是可变长度的, 程序员必须额外重写add(int, E)方法和remove(int)方法.
+ *
  * <p>The programmer should generally provide a void (no argument) and collection
  * constructor, as per the recommendation in the {@link Collection} interface
  * specification.
+ *
+ * 程序员一般应该提供一个无参和(参数是)集合的构造方法, 根据Collection的接口规范.
  *
  * <p>Unlike the other abstract collection implementations, the programmer does
  * <i>not</i> have to provide an iterator implementation; the iterator and
