@@ -79,12 +79,19 @@ import java.util.function.Predicate;
  * generally decreases throughput but reduces variability and avoids
  * starvation.
  *
+ * 这个类支持一个可选的公平策略，用于等待生产者和消费者线程。在默认的情况下，这个的顺序是不保证的。
+ * 然而，当在一个队列构造的时候就设置了true，那么线程就按FIFO的顺序进行访问。同城会降低吞吐量，但是减少可变性，从而避免造成"饥饿"。
+ *
  * <p>This class and its iterator implement all of the <em>optional</em>
  * methods of the {@link Collection} and {@link Iterator} interfaces.
+ *
+ * 这个类和它的迭代器实现Collection和Iterator接口的所有可选择的方法。
  *
  * <p>This class is a member of the
  * <a href="{@docRoot}/java.base/java/util/package-summary.html#CollectionsFramework">
  * Java Collections Framework</a>.
+ *
+ * 这个类是Java集合类框架的一员。
  *
  * @since 1.5
  * @author Doug Lea
@@ -103,19 +110,27 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * even for the items array, which is default-serialized, even if
      * it is empty. Otherwise it could not be declared final, which is
      * necessary here.
+     *
+     * 序列化ID。即使对于默认序列化的items数组，该类也依赖于默认序列化，即使它是空的。
+     * 否则，它就不能被宣布为final，这个在这里是必要的。
+     *
      */
     private static final long serialVersionUID = -817911632652898426L;
 
     /** The queued items */
+    // 入队列了的元素
     final Object[] items;
 
     /** items index for next take, poll, peek or remove */
+    // 下一个用于take，poll，peek，remove的元素下标
     int takeIndex;
 
     /** items index for next put, offer, or add */
+    // 下一个用于put，offer，add的元素下标
     int putIndex;
 
     /** Number of elements in the queue */
+    // 这个队列中元素的总数
     int count;
 
     /*
@@ -124,18 +139,25 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      */
 
     /** Main lock guarding all access */
+    // 关于守护所有访问队列的最主要的锁，可以说这个是这个类中的最关键的一个属性
     final ReentrantLock lock;
 
     /** Condition for waiting takes */
+    // 等待从队列中拿东西的条件
     private final Condition notEmpty;
 
     /** Condition for waiting puts */
+    // 等待往队列中放东西的条件
     private final Condition notFull;
 
     /**
      * Shared state for currently active iterators, or null if there
      * are known not to be any.  Allows queue operations to update
      * iterator state.
+     *
+     * 当前活动迭代器的共享状态，如果已知没有，则为null。允许队列操作更新迭代器状态。
+     * transient关键字比较少见，一般在实现Serilizable接口的类中使用，
+     * 用了这个关键字描述的属性，序列化对象的时候，这个属性就不会序列化到指定的目的地当中，一般用于敏感信息，不希望在网络操作中被传输。
      */
     transient Itrs itrs;
 
