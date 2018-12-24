@@ -67,9 +67,15 @@ import java.util.function.Consumer;
  * {@link #add(int, Object) add(int, E)} and
  * {@link #remove(int)}.
  *
+ * 与其他抽象集合实现不同, 程序员不一定要提供迭代器的实现; 迭代器和list迭代器已经被
+ * 当前类实现了, 在随机访问方法的顶部
+ *
  * <p>The documentation for each non-abstract method in this class describes its
  * implementation in detail.  Each of these methods may be overridden if the
  * collection being implemented admits a more efficient implementation.
+ *
+ * 文档对这个类中的每个非抽象方法都描述了其细节. 这里的每一个方法都可能被重写, 如果被实现
+ * 的集合提供了一个更高效地实现.
  *
  * <p>This class is a member of the
  * <a href="{@docRoot}/java.base/java/util/package-summary.html#CollectionsFramework">
