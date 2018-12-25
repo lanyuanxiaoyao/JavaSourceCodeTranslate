@@ -90,6 +90,8 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
     /**
      * Sole constructor.  (For invocation by subclass constructors, typically
      * implicit.)
+     *
+     * 单构造方法. (提供给子类构造器调用, 通常是隐藏的)
      */
     protected AbstractList() {
     }
@@ -98,12 +100,18 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * Appends the specified element to the end of this list (optional
      * operation).
      *
+     * 追加指定的元素到当前list的末尾(可选操作)
+     *
      * <p>Lists that support this operation may place limitations on what
      * elements may be added to this list.  In particular, some
      * lists will refuse to add null elements, and others will impose
      * restrictions on the type of elements that may be added.  List
      * classes should clearly specify in their documentation any restrictions
      * on what elements may be added.
+     *
+     * 支持这个操作的List可能会在什么元素能被添加到当前list上设置限制. 特别的, 一
+     * 些List将会拒绝添加null元素, 并且其他List将会对可能被添加的元素的类型设限.
+     * List类型应该在其文档里清晰地指定对任何可能被添加的元素的限制.
      *
      * @implSpec
      * This implementation calls {@code add(size(), e)}.
@@ -112,16 +120,19 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * {@code UnsupportedOperationException} unless
      * {@link #add(int, Object) add(int, E)} is overridden.
      *
-     * @param e element to be appended to this list
-     * @return {@code true} (as specified by {@link Collection#add})
+     * 注意, 当前实现会抛出UnsupportedOperationException异常,
+     * 除非add(int, E)方法被重写.
+     *
+     * @param e element to be appended to this list 将要被追加到当前list的元素
+     * @return {@code true} (as specified by {@link Collection#add}) 返回true
      * @throws UnsupportedOperationException if the {@code add} operation
-     *         is not supported by this list
+     *         is not supported by this list 如果add操作不被当前list支持
      * @throws ClassCastException if the class of the specified element
-     *         prevents it from being added to this list
+     *         prevents it from being added to this list 如果指定元素的类型在被添加到当前list的时候被拒绝
      * @throws NullPointerException if the specified element is null and this
-     *         list does not permit null elements
+     *         list does not permit null elements 如果指定元素是null并且当前list不允许存在null元素
      * @throws IllegalArgumentException if some property of this element
-     *         prevents it from being added to this list
+     *         prevents it from being added to this list 如果当前元素的一些性质
      */
     public boolean add(E e) {
         add(size(), e);
