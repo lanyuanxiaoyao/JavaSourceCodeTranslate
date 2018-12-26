@@ -153,6 +153,8 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * This implementation always throws an
      * {@code UnsupportedOperationException}.
      *
+     * 当前实现总会抛出UnsupportedOperationException异常
+     *
      * @throws UnsupportedOperationException {@inheritDoc}
      * @throws ClassCastException            {@inheritDoc}
      * @throws NullPointerException          {@inheritDoc}
@@ -170,6 +172,8 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * This implementation always throws an
      * {@code UnsupportedOperationException}.
      *
+     * 当前实现总会抛出UnsupportedOperationException异常
+     *
      * @throws UnsupportedOperationException {@inheritDoc}
      * @throws ClassCastException            {@inheritDoc}
      * @throws NullPointerException          {@inheritDoc}
@@ -186,6 +190,8 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * @implSpec
      * This implementation always throws an
      * {@code UnsupportedOperationException}.
+     *
+     * 当前实现总会抛出UnsupportedOperationException异常
      *
      * @throws UnsupportedOperationException {@inheritDoc}
      * @throws IndexOutOfBoundsException     {@inheritDoc}
