@@ -211,6 +211,9 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * {@code listIterator()}).  Then, it iterates over the list until the
      * specified element is found or the end of the list is reached.
      *
+     * 当前实现首先获取一个list迭代器(使用listIterator()). 然后, 迭代器迭代整个
+     * list, 直到指定元素被找到或者到达list的末尾.
+     *
      * @throws ClassCastException   {@inheritDoc}
      * @throws NullPointerException {@inheritDoc}
      */
@@ -236,6 +239,9 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * of the list (with {@code listIterator(size())}).  Then, it iterates
      * backwards over the list until the specified element is found, or the
      * beginning of the list is reached.
+     *
+     * 当前实现首先获取一个指针位置在list末尾的list迭代器(使用listIterator(size())).
+     * 然后, 迭代器向前迭代器整个list, 直到指定元素被找到, 或者到达list的最开始位置.
      *
      * @throws ClassCastException   {@inheritDoc}
      * @throws NullPointerException {@inheritDoc}
