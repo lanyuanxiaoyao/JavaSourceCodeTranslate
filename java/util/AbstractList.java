@@ -267,6 +267,8 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * Removes all of the elements from this list (optional operation).
      * The list will be empty after this call returns.
      *
+     * 从当前的list中移除全部元素 可选操作 在方法被调用之后list会变得空空如也
+     *
      * @implSpec
      * This implementation calls {@code removeRange(0, size())}.
      *
