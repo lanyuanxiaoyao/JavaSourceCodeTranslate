@@ -267,18 +267,24 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * Removes all of the elements from this list (optional operation).
      * The list will be empty after this call returns.
      *
-     * 从当前的list中移除全部元素 可选操作 在方法被调用之后list会变得空空如也
+     * 从当前的list中移除全部元素(可选操作), 在方法被调用之后list会变得空空如也.
      *
      * @implSpec
      * This implementation calls {@code removeRange(0, size())}.
+     * 
+     * 当前实现调用removeRange(0, size())
      *
      * <p>Note that this implementation throws an
      * {@code UnsupportedOperationException} unless {@code remove(int
      * index)} or {@code removeRange(int fromIndex, int toIndex)} is
      * overridden.
      *
+     * 请注意, 当前实现会抛出UnsupportedOperationException异常, 除非
+     * remove(int index) 或 removeRange(int fromIndex, int toIndex)
+     * 方法被重写.
+     *
      * @throws UnsupportedOperationException if the {@code clear} operation
-     *         is not supported by this list
+     *         is not supported by this list 如果clear操作不被当前list支持
      */
     public void clear() {
         removeRange(0, size());
@@ -293,6 +299,8 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * iterator into this list at the appropriate position, one at a time,
      * using {@code add(int, E)}.
      * Many implementations will override this method for efficiency.
+     *
+     * 当前实现从指定的集合获取一个迭代器, 并且遍历它(这个集合), 
      *
      * <p>Note that this implementation throws an
      * {@code UnsupportedOperationException} unless
