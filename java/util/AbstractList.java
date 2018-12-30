@@ -300,11 +300,16 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * using {@code add(int, E)}.
      * Many implementations will override this method for efficiency.
      *
-     * 当前实现从指定的集合获取一个迭代器, 并且遍历它(这个集合), 
+     * 当前实现从指定的集合获取一个迭代器, 并且遍历它(这个集合), 插入从迭代器中获取的元素
+     * 到当前的list制定的位置上，一次只有一个的情况下，使用add(int, E)方法。
+     * 许多实现都将会重写这个方法来提高效率。
      *
      * <p>Note that this implementation throws an
      * {@code UnsupportedOperationException} unless
      * {@link #add(int, Object) add(int, E)} is overridden.
+     *
+     * 注意！当前实现会抛出UnsupportedOperationException异常除非
+     * add(int, Object)和add(int, E)方法被重写。
      *
      * @throws UnsupportedOperationException {@inheritDoc}
      * @throws ClassCastException            {@inheritDoc}
@@ -323,7 +328,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
     }
 
 
-    // Iterators
+    // Iterators 迭代器
 
     /**
      * Returns an iterator over the elements in this list in proper sequence.
