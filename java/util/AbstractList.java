@@ -338,14 +338,21 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * iterator interface, relying on the backing list's {@code size()},
      * {@code get(int)}, and {@code remove(int)} methods.
      *
+     * 当前实现返回一个简单的迭代器接口的实现，以来于基础list的size()，get(int)和remove(int)方法。
+     *
      * <p>Note that the iterator returned by this method will throw an
      * {@link UnsupportedOperationException} in response to its
      * {@code remove} method unless the list's {@code remove(int)} method is
      * overridden.
      *
+     * 注意，这个方法返回的迭代器会在相应它的remove方法的时候抛出UnsupportedOperationException
+     * 异常除非list的remove(int)方法被重写。
+     *
      * <p>This implementation can be made to throw runtime exceptions in the
      * face of concurrent modification, as described in the specification
      * for the (protected) {@link #modCount} field.
+     *
+     * 当前实现在并发修改的情况下会抛出运行时异常，
      *
      * @return an iterator over the elements in this list in proper sequence
      */
