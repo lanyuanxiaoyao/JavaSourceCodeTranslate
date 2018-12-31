@@ -352,7 +352,7 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * face of concurrent modification, as described in the specification
      * for the (protected) {@link #modCount} field.
      *
-     * 当前实现在并发修改的情况下会抛出运行时异常，
+     * 当前实现在并发修改的情况下会抛出运行时异常，就像规范里描述的modCount字段一样。
      *
      * @return an iterator over the elements in this list in proper sequence
      */
@@ -365,6 +365,8 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      *
      * @implSpec
      * This implementation returns {@code listIterator(0)}.
+     *
+     * 当前实现返回listIterator(0)
      *
      * @see #listIterator(int)
      */
