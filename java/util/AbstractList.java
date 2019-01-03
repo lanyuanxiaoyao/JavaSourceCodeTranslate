@@ -385,6 +385,10 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * {@code get(int)}, {@code set(int, E)}, {@code add(int, E)}
      * and {@code remove(int)} methods.
      *
+     * 当前实现返回一个实现了Iterator接口的ListIterator接口并通过iterator()返回的
+     * 直接实现. ListIterator接口的实现依赖于支持list的get(int), set(int, E), add(int, E)
+     * remove(int) 方法.
+     *
      * <p>Note that the list iterator returned by this implementation will
      * throw an {@link UnsupportedOperationException} in response to its
      * {@code remove}, {@code set} and {@code add} methods unless the
