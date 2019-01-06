@@ -162,10 +162,13 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
     transient Itrs itrs;
 
     // Internal helper methods
+    // 内部的帮助方法
 
     /**
      * Increments i, mod modulus.
      * Precondition and postcondition: 0 <= i < modulus.
+     *
+     * 用于i自增，0 <= i < modulus
      */
     static final int inc(int i, int modulus) {
         if (++i >= modulus) i = 0;
@@ -175,6 +178,8 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
     /**
      * Decrements i, mod modulus.
      * Precondition and postcondition: 0 <= i < modulus.
+     *
+     * 用于i自减，0 <= i < modulus
      */
     static final int dec(int i, int modulus) {
         if (--i < 0) i = modulus - 1;
@@ -183,6 +188,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
 
     /**
      * Returns item at index i.
+     * 返回下标为i的item
      */
     @SuppressWarnings("unchecked")
     final E itemAt(int i) {
@@ -192,6 +198,9 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
     /**
      * Returns element at array index i.
      * This is a slight abuse of generics, accepted by javac.
+     *
+     * 返回传入items数组里的下标i锁对应的元素
+     * 这个是对javac所接受的泛型的一种拓展或者说滥用
      */
     @SuppressWarnings("unchecked")
     static <E> E itemAt(Object[] items, int i) {
@@ -201,6 +210,9 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
     /**
      * Inserts element at current put position, advances, and signals.
      * Call only when holding lock.
+     *
+     * 插入目标元素到当前该放置的位置
+     * 只有当拿到锁的时候才能调用。
      */
     private void enqueue(E e) {
         // assert lock.isHeldByCurrentThread();
@@ -216,6 +228,9 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
     /**
      * Extracts element at current take position, advances, and signals.
      * Call only when holding lock.
+     *
+     * 取出目标元素在当前该取的位置
+     * 只有当拿到锁的时候才能调用。
      */
     private E dequeue() {
         // assert lock.isHeldByCurrentThread();
@@ -237,6 +252,10 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * Deletes item at array index removeIndex.
      * Utility for remove(Object) and iterator.remove.
      * Call only when holding lock.
+     *
+     * 删除数组中removeIndex下标对应的元素。
+     * 用于删除元素以及iterator.remove
+     * 只有当拿到锁的时候才能调用。
      */
     void removeAt(final int removeIndex) {
         // assert lock.isHeldByCurrentThread();
@@ -271,6 +290,10 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
         }
         notFull.signal();
     }
+
+    /**
+     *  其实这个类里面最关键的是那个 ReentrantLock
+     */
 
     /**
      * Creates an {@code ArrayBlockingQueue} with the given (fixed)
