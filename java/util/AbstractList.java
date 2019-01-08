@@ -395,9 +395,15 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * list's {@code remove(int)}, {@code set(int, E)}, and
      * {@code add(int, E)} methods are overridden.
      *
+     * 请注意, 当前实现返回的list迭代器在响应remove, set, add方法的时候将会抛出
+     * UnsupportedOperationException异常, 除非list的remove(int), set(int, E),
+     * add(int, E)方法被重写.
+     *
      * <p>This implementation can be made to throw runtime exceptions in the
      * face of concurrent modification, as described in the specification for
      * the (protected) {@link #modCount} field.
+     *
+     * 当前实现在并发修改环境下会抛出运行时异常, 就像规范中描述的modCount字段一样.
      *
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
@@ -410,6 +416,8 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
     private class Itr implements Iterator<E> {
         /**
          * Index of element to be returned by subsequent call to next.
+         *
+         * 通过后续调用返回元素的索引(下标)
          */
         int cursor = 0;
 
@@ -417,6 +425,9 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
          * Index of element returned by most recent call to next or
          * previous.  Reset to -1 if this element is deleted by a call
          * to remove.
+         *
+         * 最近调用下一个或上一个时返回的元素的索引(下标). 如果当前元素被删除, 
+         * 就重置为-1.
          */
         int lastRet = -1;
 
@@ -424,6 +435,9 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
          * The modCount value that the iterator believes that the backing
          * List should have.  If this expectation is violated, the iterator
          * has detected concurrent modification.
+         *
+         * 迭代器认为支持list应该有modCount值. 如果违反了这个期望, 那么迭代器将
+         * 检测到并发修改.
          */
         int expectedModCount = modCount;
 
