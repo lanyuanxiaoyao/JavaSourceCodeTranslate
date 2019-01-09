@@ -551,6 +551,11 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * If this list implements {@code RandomAccess} the returned list will
      * be an instance of the subclass that implements {@code RandomAccess}.
      *
+     * 当前实现返回一个AbstractList的子类list. 子类在私有字段中存储子list的大小(在
+     * 其生命周期中可能会改变), 和支持list预期的modCount值. 子类有两种形式, 一种是
+     * 实现了RandomAccess(随机访问). 如果当前list实现了RandomAccess(随机访问), 返
+     * 回的list将会是实现了RandomAccess(随机访问)的子类的实例.
+     *
      * <p>The subclass's {@code set(int, E)}, {@code get(int)},
      * {@code add(int, E)}, {@code remove(int)}, {@code addAll(int,
      * Collection)} and {@code removeRange(int, int)} methods all
