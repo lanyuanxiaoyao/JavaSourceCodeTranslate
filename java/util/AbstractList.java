@@ -564,6 +564,10 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * {@code addAll(Collection c)} method merely returns {@code addAll(size,
      * c)}.
      *
+     * 子类的set(int, E), get(int), add(int, E), remove(int), addAll(int, Collection) 
+     * 和removeRange(int, int)方法全部都表示在支持abstract list里面相应的方法, 
+     * 在对索引的边界检查和调整偏移量之后. addAll(Collection c)方法仅返回addAll(size, c)
+     *
      * <p>The {@code listIterator(int)} method returns a "wrapper object"
      * over a list iterator on the backing list, which is created with the
      * corresponding method on the backing list.  The {@code iterator} method
