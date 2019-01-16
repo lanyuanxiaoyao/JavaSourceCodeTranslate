@@ -574,6 +574,10 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * merely returns {@code listIterator()}, and the {@code size} method
      * merely returns the subclass's {@code size} field.
      *
+     * listIterator(int) 方法返回一个支持list迭代器的包装对象, (这个对象)创建了
+     * 支持list对应的方法. iterator方法仅仅返回listIterator()(返回的对象), 并且
+     * size方法仅返回子类的size属性.
+     *
      * <p>All methods first check to see if the actual {@code modCount} of
      * the backing list is equal to its expected value, and throw a
      * {@code ConcurrentModificationException} if it is not.
