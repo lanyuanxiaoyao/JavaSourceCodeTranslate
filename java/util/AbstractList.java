@@ -582,6 +582,9 @@ public abstract class AbstractList<E> extends AbstractCollection<E> implements L
      * the backing list is equal to its expected value, and throw a
      * {@code ConcurrentModificationException} if it is not.
      *
+     * 所有方法都会首先检查支持list当前的modCount值是否等于期望值, 如果不等的话就抛出
+     * ConcurrentModificationException异常.
+     *
      * @throws IndexOutOfBoundsException if an endpoint index value is out of range
      *         {@code (fromIndex < 0 || toIndex > size)}
      * @throws IllegalArgumentException if the endpoint indices are out of order
